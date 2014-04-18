@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="Mandro.Blog" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2014-01.2.3">
+  <Role name="Mandro.Blog.Worker">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="mandro" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBpQYJKoZIhvcNAQcDoIIBljCCAZICAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEFrsiXFJOeGpQUZIinfNLNswDQYJKoZIhvcNAQEBBQAEggEAJqD8tn0EtcSA0LlNzttls1e6RX0Yeo8Wn0Qm31uE4bA0YXTF3PdzbwA8dM/1KnJCF+fJaqYaXaCshuvXb8UMRFh1h7Hk5im2MM/VyeX0q30sw84vwjxiZVSMqfDQNq6Q42V1Ii2BSyR1/iYOfnLuJZkrK6ZjfOJgWkKOYLLq8l5wpKtXd9BvpZJmW/3IKybaqdOaSo7SKupI5MPwCVVfIBvjdKwlKA6kfH+HYVu7obNRI64cj/8tmjMfOnd+ZyjCnLFxfbb6/lhht6ICLTGwGAC5kVF6wG5SyEOK9vhBq7q4YpQ7+q8lSh3EN+UjZX32TcqG3kmK5x4gDVcKzIwSHTA7BgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECK5b+lqrUPLegBjXxBoElaqFvEV7OiRsfz0nMkNX6Iw2AM8=" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2015-04-18T23:59:59.0000000+02:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
+      <Setting name="BlogStorage" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="BB7501B277DE5F328AFAA0C9BC0430F6B6E76B1D" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+</ServiceConfiguration>
