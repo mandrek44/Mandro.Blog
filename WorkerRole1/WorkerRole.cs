@@ -30,6 +30,9 @@ namespace WorkerRole1
                 // This is a sample worker implementation. Replace with your logic.
                 Trace.TraceInformation("WorkerRole1 entry point called");
 
+                // Initialize the markdown here, before any Razor view uses it - without it Razor won't be able to load Markdown
+                new MarkdownSharp.Markdown();
+
                 using (WebApp.Start<Startup>("http://*:80"))
                 {
                     Trace.TraceInformation("Working");
@@ -108,12 +111,9 @@ namespace WorkerRole1
         {
             if (context.Request.Path == new PathString("/"))
             {
-                // download blog post
                 var blogPostsRepository = new BlogPostsRepository();
 
                 string templateContent = File.ReadAllText("Index.cshtml");
-
-                new MarkdownSharp.Markdown();
                 var result = Razor.Parse(templateContent, new { Posts = blogPostsRepository.GetPosts() });
 
                 await context.Response.WriteAsync(result);
@@ -129,35 +129,6 @@ namespace WorkerRole1
     {
         public IEnumerable<BlogPost> GetPosts()
         {
-            //            yield return new BlogPost { Title = "How to Host Katana on Azure?", Content = @"Following steps worked for me, using Owin 2.1 and Azure SDK 2.3:
-            //
-            //1. Create ""Windows Azure Cloud Service"" Project with ""Worker Role"" added
-            //2. In created WorkerRole project, add following NuGet package: ""InstallMicrosoft.Owin.SelfHost""
-            //3. Create following ""Startup"" class:
-            //
-            //        public class Startup
-            //        {
-            //            public void Configuration(IAppBuilder appBuilder)
-            //            {
-            //                appBuilder .UseWelcomePage();
-            //            }
-            //        }
-            //4. In WorkerRole class, in Run() method, start use following code to start the server:
-            //
-            //        using (WebApp. Start<Startup >(""http://*:80"" ))
-            //        {
-            //            Trace.TraceInformation( ""Working"");
-            //            while (true )
-            //            {
-            //                Thread.Sleep( 10000);
-            //            }
-            //        }
-            //5. Go to Worker Role properties (righ-click the node under Cloud Services project, select Properties). On End-points tab, add new endpoint:
-            //![Endpoints Configuration](/img/posts/owin_endpoints.jpg)
-            //
-            //6. Deploy the Worker Role to Azure and Enjoy!", Created = new DateTime(2014, 04, 18, 15, 02, 0) };
-
-
             var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("BlogStorage"));
             var tableClient = storageAccount.CreateCloudTableClient();
             var blogPostsTable = tableClient.GetTableReference("BlogPosts");
@@ -203,13 +174,22 @@ namespace WorkerRole1
         }
     }
 
-    public class BlogPost : TableEntity
+    public class RandomIdTableEntity : TableEntity
     {
-        public BlogPost()
-            : base((DateTime.Now.Millisecond % 10).ToString(), Guid.NewGuid().ToString())
+        public RandomIdTableEntity(int clusteringIndex)
+            : base((DateTime.Now.Millisecond % clusteringIndex).ToString(), Guid.NewGuid().ToString())
         {
         }
 
+        public RandomIdTableEntity()
+            : this(10)
+        {
+        }
+
+    }
+
+    public class BlogPost : RandomIdTableEntity
+    {
         public string Title { get; set; }
 
         public string Content { get; set; }
