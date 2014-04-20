@@ -1,7 +1,9 @@
 ﻿@model dynamic
-
+@using MarkdownSharp
 @{
+    
     Layout = null;
+    var markdown = new Markdown();
 }
 
 <!DOCTYPE html>
@@ -32,7 +34,7 @@
             <div class="header">
                 <hgroup>
                     <h1 class="brand-title">Marcin Drobik</h1>
-                    <h2 class="brand-tagline">software journeyman diary</h2>
+                    <h2 class="brand-tagline">software journeyman notes</h2>
                 </hgroup>
                 @{
                     /*<nav class="nav">
@@ -68,7 +70,7 @@
                             </header>
                             <div class="post-description">
                                 <p>
-                                    @blogPost.Content
+                                    @Raw(markdown.Transform(blogPost.Content))
                                 </p>
                             </div>
                         </section>

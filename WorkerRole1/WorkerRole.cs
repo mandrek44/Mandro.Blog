@@ -111,8 +111,11 @@ namespace WorkerRole1
                 // download blog post
                 var blogPostsRepository = new BlogPostsRepository();
 
-                string template = File.ReadAllText("Index.cshtml");
-                string result = Razor.Parse(template, new { Posts = blogPostsRepository.GetPosts() });
+                string templateContent = File.ReadAllText("Index.cshtml");
+
+                new MarkdownSharp.Markdown();
+                var result = Razor.Parse(templateContent, new { Posts = blogPostsRepository.GetPosts() });
+
                 await context.Response.WriteAsync(result);
             }
             else
@@ -126,6 +129,35 @@ namespace WorkerRole1
     {
         public IEnumerable<BlogPost> GetPosts()
         {
+//            yield return new BlogPost { Title = "How to Host Katana on Azure?", Content = @"Following steps worked for me, using Owin 2.1 and Azure SDK 2.3:
+//
+//1. Create ""Windows Azure Cloud Service"" Project with ""Worker Role"" added
+//2. In created WorkerRole project, add following NuGet package: ""InstallMicrosoft.Owin.SelfHost""
+//3. Create following ""Startup"" class:
+//
+//        public class Startup
+//        {
+//            public void Configuration(IAppBuilder appBuilder)
+//            {
+//                appBuilder .UseWelcomePage();
+//            }
+//        }
+//4. In WorkerRole class, in Run() method, start use following code to start the server:
+//
+//        using (WebApp. Start<Startup >(""http://*:80"" ))
+//        {
+//            Trace.TraceInformation( ""Working"");
+//            while (true )
+//            {
+//                Thread.Sleep( 10000);
+//            }
+//        }
+//5. Go to Worker Role properties (righ-click the node under Cloud Services project, select Properties). On End-points tab, add new endpoint:
+//![Endpoints Configuration](/img/posts/owin_endpoints.jpg)
+//
+//6. Deploy the Worker Role to Azure and Enjoy!", Created = new DateTime(2014, 04, 18, 15, 02, 0) };
+
+
             var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("BlogStorage"));
             var tableClient = storageAccount.CreateCloudTableClient();
             var blogPostsTable = tableClient.GetTableReference("BlogPosts");
@@ -133,13 +165,6 @@ namespace WorkerRole1
             if (!blogPostsTable.Exists())
             {
                 blogPostsTable.CreateIfNotExists();
-                blogPostsTable.Execute(
-                    TableOperation.Insert(
-                        new BlogPost
-                        {
-                            Title = "Building Blog Engine with Katana", Content = "Kata is Microsoft implementation of OWIN standard. Let's see how to build a Blog Engine with it.",
-                            Created = new DateTime(2014, 04, 18, 15, 02, 0)
-                        }));
             }
 
             return blogPostsTable.CreateQuery<BlogPost>().AsEnumerable();
