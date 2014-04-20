@@ -8,7 +8,7 @@
     <ProjectGuid>{72A534A3-DF8D-424A-8F1C-6810B255155E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mandro.Blog.Workerw</RootNamespace>
+    <RootNamespace>Mandro.Blog.Worker</RootNamespace>
     <AssemblyName>Mandro.Blog.Worker</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.3.1\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="MarkdownSharp">
       <HintPath>..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
@@ -100,15 +103,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlogPost.cs" />
+    <Compile Include="BlogPostsRepository.cs" />
+    <Compile Include="Infrastructure\MvcQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Infrastructure\RandomIdTableEntity.cs" />
+    <Compile Include="Infrastructure\SimpleMvcMiddleware.cs" />
+    <Compile Include="Infrastructure\Startup.cs" />
+    <Compile Include="Infrastructure\TraceMiddleware.cs" />
+    <Compile Include="Controllers\Home.cs" />
     <Compile Include="WorkerRole.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Index.cshtml">
+    <None Include="packages.config" />
+    <None Include="Views\Home\Index.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\layouts\blog-old-ie.css">

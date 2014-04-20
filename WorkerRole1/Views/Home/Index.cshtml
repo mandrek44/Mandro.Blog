@@ -1,7 +1,7 @@
 ﻿@model dynamic
 @using MarkdownSharp
 @{
-    
+
     Layout = null;
     var markdown = new Markdown();
 }
@@ -15,16 +15,16 @@
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure.css">
 
     <!--[if lte IE 8]>
-        <link rel="stylesheet" href="css/main-grid-old-ie.css">
+        <link rel="stylesheet" href="/css/main-grid-old-ie.css">
     <![endif]-->
     <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="css/main-grid.css">
+    <link rel="stylesheet" href="/css/main-grid.css">
     <!--<![endif]-->
     <!--[if lte IE 8]>
-        <link rel="stylesheet" href="css/layouts/blog-old-ie.css">
+        <link rel="stylesheet" href="/css/layouts/blog-old-ie.css">
     <![endif]-->
     <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="css/layouts/blog.css">
+    <link rel="stylesheet" href="/css/layouts/blog.css">
     <!--<![endif]-->
 
 </head>
@@ -37,7 +37,7 @@
                     <h2 class="brand-tagline">software journeyman notes</h2>
                 </hgroup>
                 @{
-                    /*<nav class="nav">
+    /*<nav class="nav">
                     <ul class="nav-list">
                         <li class="nav-item">
                             <a class="pure-button" href="http://purecss.io">Pure</a>
@@ -54,7 +54,7 @@
         <div class="content pure-u-1 pure-u-med-3-4">
             <div>
                 <!-- A wrapper for all the blog posts -->
-                
+
                 <div class="posts">
                     <h1 class="content-subhead">Recent Posts</h1>
                     @foreach (var blogPost in @Model.Posts)
@@ -77,7 +77,7 @@
 
                     }
                     @{
-                        /*
+    /*
                     <section class="post">
                         <header class="post-header">
                             <img class="post-avatar" alt="Reid Burke&#x27;s avatar" height="48" width="48" src="img/common/reid-avatar.png">
