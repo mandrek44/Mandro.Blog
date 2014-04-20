@@ -1,7 +1,12 @@
 ﻿using System;
 
+using Mandro.Blog.Worker.Infrastructure;
+
+using Microsoft.Owin;
+
 namespace Mandro.Blog.Worker.Controllers
 {
+    [Authorize]
     public class Post
     {
         private readonly BlogPostsRepository _repository;
@@ -11,8 +16,10 @@ namespace Mandro.Blog.Worker.Controllers
             _repository = repository;
         }
 
-        public void GetNew()
+        public dynamic GetNew(dynamic environment)
         {
+            var owinContext = environment.Context as IOwinContext;
+            return new { UserName = owinContext.Authentication.User.Identity.Name };
         }
 
         public void PostNew(dynamic model)

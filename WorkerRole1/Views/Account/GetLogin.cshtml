@@ -44,25 +44,20 @@
                 <!-- A wrapper for all the blog posts -->
 
                 <div class="posts">
-                    <form class="pure-form pure-form-aligned" action="/Post/New" method="POST">
+                    <form class="pure-form pure-form-aligned" action="/Account/Login" method="POST">
                         <fieldset>
                             <div class="pure-control-group">
-                                <label>Author</label>
-                                <label>@Model.UserName</label>
-                            </div>
-                            
-                            <div class="pure-control-group">
-                                <label for="name">Title</label>
-                                <input id="name" name="title" type="text" placeholder="Title">
+                                <label for="name">User Name</label>
+                                <input id="name" name="userName" type="text" placeholder="Title">
                             </div>
 
                             <div class="pure-control-group">
-                                <label for="text">Content</label>
-                                <textarea id="text" name="content" placeholder="Content" rows="10" cols="80"></textarea>
+                                <label for="text">Password</label>
+                                <input id="password" name="password" type="password" placeholder="Password" />
                             </div>
 
                             <div class="pure-controls">
-                                <button type="submit" class="pure-button pure-button-primary">Submit</button>
+                                <button type="submit" class="pure-button pure-button-primary">Log in</button>
                             </div>
                         </fieldset>
                     </form>

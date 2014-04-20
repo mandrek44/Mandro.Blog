@@ -38,8 +38,8 @@ namespace Mandro.Blog.Worker.Infrastructure
 
             if (query != null)
             {
-                bool success;
-                var returnValue = TryRunControllerMethod(query, out success);
+                var success = await TryAuthenticate(context, query);
+                var returnValue = success ? TryRunControllerMethod(context, query, out success) : null;
 
                 if (success)
                 {
@@ -55,19 +55,35 @@ namespace Mandro.Blog.Worker.Infrastructure
             await Next.Invoke(context);
         }
 
-        private object TryRunControllerMethod(MvcQuery query, out bool success)
+        private async Task<bool> TryAuthenticate(IOwinContext context, MvcQuery query)
+        {
+            bool success2 = true;
+
+            var controllerType = _controllersMap[query.Controller];
+            var customAttributes = controllerType.GetCustomAttributes(typeof(AuthorizeAttribute));
+            if (customAttributes.Any())
+            {
+                var authenticateResult = await context.Authentication.AuthenticateAsync("Cookie");
+                if (authenticateResult == null || authenticateResult.Identity == null)
+                {
+                    success2 = false;
+                }
+            }
+            return success2;
+        }
+
+        private object TryRunControllerMethod(IOwinContext context, MvcQuery query, out bool success)
         {
             var controllerType = _controllersMap[query.Controller];
             var instance = _container.Resolve(controllerType);
             var controllerMethod = controllerType.GetMethods().FirstOrDefault(method => method.Name == query.Method);
             
-           
             if (controllerMethod != null)
             {
                 success = true;
 
                 
-                var methodParameterValues = GetMethodParameterValues(query.Parameters, controllerMethod);
+                var methodParameterValues = GetMethodParameterValues(context, query.Parameters, controllerMethod);
 
                 return controllerMethod.Invoke(instance, methodParameterValues);
             }
@@ -78,7 +94,7 @@ namespace Mandro.Blog.Worker.Infrastructure
             }
         }
 
-        private static object[] GetMethodParameterValues(Dictionary<string, string> parameters, MethodInfo controllerMethod)
+        private static object[] GetMethodParameterValues(IOwinContext context, Dictionary<string, string> parameters, MethodInfo controllerMethod)
         {
             var methodParameterValues = new object[] { };
 
@@ -89,11 +105,16 @@ namespace Mandro.Blog.Worker.Infrastructure
 
                 foreach (var parameter in parameters)
                 {
-                    dictionary.Add(parameter.Key.Dehumanize(), parameter.Value);
+                    dictionary.Add(parameter.Key.Dehumanize().Replace(" ", string.Empty), parameter.Value);
                 }
 
+                dictionary.Add("Context", context);
+
                 methodParameterValues = new object[] { expandoObject };
+
+                context.Authentication.SignIn();
             }
+
             return methodParameterValues;
         }
 
