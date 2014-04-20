@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
 using Autofac;
+
+using Humanizer;
 
 using Microsoft.Owin;
 
@@ -31,12 +34,12 @@ namespace Mandro.Blog.Worker.Infrastructure
 
         public override async Task Invoke(IOwinContext context)
         {
-            var query = MvcQuery.Parse(context.Request, _controllersMap);
+            var query = await MvcQuery.ParseAsync(context.Request, _controllersMap);
 
             if (query != null)
             {
-                var success = false;
-                var returnValue = TryRunControllerMethod(query, ref success);
+                bool success;
+                var returnValue = TryRunControllerMethod(query, out success);
 
                 if (success)
                 {
@@ -44,31 +47,54 @@ namespace Mandro.Blog.Worker.Infrastructure
                     var result = Razor.Parse(templateContent, returnValue);
 
                     await context.Response.WriteAsync(result);
-                }
 
-                return;
+                    return;
+                }
             }
 
             await Next.Invoke(context);
         }
 
-        private object TryRunControllerMethod(MvcQuery query, ref bool methodRun)
+        private object TryRunControllerMethod(MvcQuery query, out bool success)
         {
             var controllerType = _controllersMap[query.Controller];
             var instance = _container.Resolve(controllerType);
             var controllerMethod = controllerType.GetMethods().FirstOrDefault(method => method.Name == query.Method);
             
-            
+           
             if (controllerMethod != null)
             {
-                methodRun = true;
-                return controllerMethod.Invoke(instance, new object[] { });
+                success = true;
+
+                
+                var methodParameterValues = GetMethodParameterValues(query.Parameters, controllerMethod);
+
+                return controllerMethod.Invoke(instance, methodParameterValues);
             }
             else
             {
-                methodRun = false;
+                success = false;
                 return null;
             }
+        }
+
+        private static object[] GetMethodParameterValues(Dictionary<string, string> parameters, MethodInfo controllerMethod)
+        {
+            var methodParameterValues = new object[] { };
+
+            if (controllerMethod.GetParameters().Any())
+            {
+                var expandoObject = new ExpandoObject();
+                var dictionary = expandoObject as IDictionary<string, object>;
+
+                foreach (var parameter in parameters)
+                {
+                    dictionary.Add(parameter.Key.Dehumanize(), parameter.Value);
+                }
+
+                methodParameterValues = new object[] { expandoObject };
+            }
+            return methodParameterValues;
         }
 
         private void LoadAssemblyControllers(Assembly assembly)

@@ -1,4 +1,6 @@
-﻿namespace Mandro.Blog.Worker.Controllers
+﻿using System.Linq;
+
+namespace Mandro.Blog.Worker.Controllers
 {
     public class Home
     {
@@ -11,7 +13,7 @@
 
         public dynamic GetIndex()
         {
-            return new { Posts = _blogPostsRepository.GetPosts() };
+            return new { Posts = _blogPostsRepository.GetPosts().OrderByDescending(post => post.Created).ToArray() };
         }
     }
 }

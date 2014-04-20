@@ -53,7 +53,16 @@ namespace Mandro.Blog.Worker
                                                              }));
             }
 
-            return blogPostsTable.CreateQuery<BlogPost>().AsEnumerable();
+            return blogPostsTable.CreateQuery<BlogPost>().ToArray();
+        }
+
+        public void AddPost(BlogPost blogPost)
+        {
+            var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("BlogStorage"));
+            var tableClient = storageAccount.CreateCloudTableClient();
+            var blogPostsTable = tableClient.GetTableReference("BlogPosts");
+
+            blogPostsTable.Execute(TableOperation.Insert(blogPost));
         }
     }
 }

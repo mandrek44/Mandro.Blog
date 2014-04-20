@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Humanizer;
 
@@ -13,7 +14,7 @@ namespace Mandro.Blog.Worker.Infrastructure
         private const string DefaultController = "Home";
         private const string DefaultControllerMethod = "Index";
 
-        public static MvcQuery Parse(IOwinRequest request, IDictionary<string, Type> controllersMap)
+        public static async Task<MvcQuery> ParseAsync(IOwinRequest request, IDictionary<string, Type> controllersMap)
         {
             var methodName = request.Method.ToLower().Pascalize();
 
@@ -42,12 +43,17 @@ namespace Mandro.Blog.Worker.Infrastructure
                         mvcQuery.Method = methodName + DefaultControllerMethod;
                     }
 
+                    var formCollection = await request.ReadFormAsync();
+                    mvcQuery.Parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
+
                     return mvcQuery;
                 }
             }
 
             return null;
         }
+
+        public Dictionary<string, string> Parameters { get; set; }
 
         public string Method { get; private set; }
 
