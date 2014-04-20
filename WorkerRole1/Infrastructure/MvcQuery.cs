@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Humanizer;
+
+using Microsoft.Owin;
+
 namespace Mandro.Blog.Worker.Infrastructure
 {
     internal class MvcQuery
@@ -9,11 +13,14 @@ namespace Mandro.Blog.Worker.Infrastructure
         private const string DefaultController = "Home";
         private const string DefaultControllerMethod = "Index";
 
-        public static MvcQuery Parse(string query, IDictionary<string, Type> controllersMap)
+        public static MvcQuery Parse(IOwinRequest request, IDictionary<string, Type> controllersMap)
         {
+            var methodName = request.Method.ToLower().Pascalize();
+
+            var query = request.Path.Value;
             if (query == "/")
             {
-                return new MvcQuery { Controller = DefaultController, Method = DefaultControllerMethod };
+                return new MvcQuery { Controller = DefaultController, Method = methodName + DefaultControllerMethod };
             }
 
             var mvcQuery = new MvcQuery();
@@ -28,11 +35,11 @@ namespace Mandro.Blog.Worker.Infrastructure
 
                     if (queryParts.Any())
                     {
-                        mvcQuery.Method = queryParts.Dequeue();
+                        mvcQuery.Method = methodName + queryParts.Dequeue();
                     }
                     else
                     {
-                        mvcQuery.Method = DefaultControllerMethod;
+                        mvcQuery.Method = methodName + DefaultControllerMethod;
                     }
 
                     return mvcQuery;

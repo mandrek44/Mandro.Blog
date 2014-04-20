@@ -31,7 +31,7 @@ namespace Mandro.Blog.Worker.Infrastructure
 
         public override async Task Invoke(IOwinContext context)
         {
-            var query = MvcQuery.Parse(context.Request.Path.Value, _controllersMap);
+            var query = MvcQuery.Parse(context.Request, _controllersMap);
 
             if (query != null)
             {
@@ -57,12 +57,18 @@ namespace Mandro.Blog.Worker.Infrastructure
             var controllerType = _controllersMap[query.Controller];
             var instance = _container.Resolve(controllerType);
             var controllerMethod = controllerType.GetMethods().FirstOrDefault(method => method.Name == query.Method);
-            var returnValue = controllerMethod.Invoke(instance, new object[] { });
+            
+            
             if (controllerMethod != null)
             {
                 methodRun = true;
+                return controllerMethod.Invoke(instance, new object[] { });
             }
-            return returnValue;
+            else
+            {
+                methodRun = false;
+                return null;
+            }
         }
 
         private void LoadAssemblyControllers(Assembly assembly)
