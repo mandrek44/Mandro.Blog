@@ -1,4 +1,5 @@
 ﻿@model dynamic
+@using System
 @using Mandro.Blog.Worker.Controllers
 @using MarkdownSharp
 @{
@@ -66,7 +67,7 @@
                                 @{/*<img class="post-avatar" alt="Eric Ferraiuolo&#x27;s avatar" height="48" width="48" src="img/common/ericf-avatar.png">*/}
                                 <h2 class="post-title">@blogPost.Title</h2>
                                 <p class="post-meta">
-                                    By <a class="post-author" href="#">Marcin Drobik</a>
+                                    On @blogPost.Created.ToShortDateString()
                                 </p>
                             </header>
                             <div class="post-description">
