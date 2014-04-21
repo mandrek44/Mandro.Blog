@@ -46,6 +46,12 @@ namespace Mandro.Blog.Worker.Infrastructure
                     var formCollection = await request.ReadFormAsync();
                     mvcQuery.Parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
 
+                    int paramIndex = 1;
+                    while (queryParts.Any())
+                    {
+                        mvcQuery.Parameters.Add("Param" + paramIndex++, queryParts.Dequeue());
+                    }
+
                     return mvcQuery;
                 }
             }
