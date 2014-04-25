@@ -23,20 +23,10 @@ namespace Mandro.Blog.Worker.Infrastructure
                                         ShowEnvironment = true
                                     });
 
-
-            var opts = new CookieAuthenticationOptions
-            {
-                AuthenticationType = "Cookie",
-  //              CookieName = "foo",
-//                AuthenticationMode = AuthenticationMode.Passive,
-//                CookieSecure = CookieSecureOption.Always,
-  //              ExpireTimeSpan = TimeSpan.FromMinutes(20),
-    //            SlidingExpiration = true,
-//                LoginPath = new PathString("/login.cshtml")
-
-            };
-
-            appBuilder.UseCookieAuthentication(opts);
+            appBuilder.UseCookieAuthentication(new CookieAuthenticationOptions
+                                               {
+                                                   AuthenticationType = "Cookie",
+                                               });
 
             appBuilder.Use<SimpleMvcMiddleware>();
             

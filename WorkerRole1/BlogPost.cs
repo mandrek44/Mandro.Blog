@@ -11,5 +11,7 @@ namespace Mandro.Blog.Worker
         public string Content { get; set; }
 
         public DateTime Created { get; set; }
+
+        public string Permalink { get; set; }
     }
 }

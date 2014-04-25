@@ -36,86 +36,96 @@ namespace Mandro.Blog.Worker.Infrastructure
         {
             var query = await MvcQuery.ParseAsync(context.Request, _controllersMap);
 
-            if (query != null)
+            if (query == null)
             {
-                var success = await TryAuthenticate(context, query);
-                var returnValue = success ? TryRunControllerMethod(context, query, out success) : null;
+                await Next.Invoke(context);
+                return;
+            }
 
-                if (success)
-                {
-                    var templateContent = File.ReadAllText(ViewsFolderName + "/" + query.Controller + "/" + query.Method + ViewFileExtension);
-                    var result = Razor.Parse(templateContent, returnValue);
+            if (!await TryAuthenticate(context, query))
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync("Unauthorized");
+                return;
+            }
 
-                    await context.Response.WriteAsync(result);
+            var methodResult = await TryRunControllerMethod(context, query);
+            if (methodResult.Success)
+            {
+                var templateContent = await ReadViewTemplate(query);
+                var result = await Task.Run(() => Razor.Parse(templateContent, methodResult.Result));
 
-                    return;
-                }
+                await context.Response.WriteAsync(result);
             }
 
             await Next.Invoke(context);
         }
 
-        private async Task<bool> TryAuthenticate(IOwinContext context, MvcQuery query)
+        private async static Task<string> ReadViewTemplate(MvcQuery query)
         {
-            bool success2 = true;
-
-            var controllerType = _controllersMap[query.Controller];
-            var customAttributes = controllerType.GetCustomAttributes(typeof(AuthorizeAttribute));
-            if (customAttributes.Any())
+            var path = ViewsFolderName + "/" + query.Controller + "/" + query.Method + ViewFileExtension;
+            using (var fileStream = File.OpenRead(path))
+            using (var fileReader = new StreamReader(fileStream))
             {
-                var authenticateResult = await context.Authentication.AuthenticateAsync("Cookie");
-                if (authenticateResult == null || authenticateResult.Identity == null)
-                {
-                    success2 = false;
-                }
+                return await fileReader.ReadToEndAsync();
             }
-            return success2;
         }
 
-        private object TryRunControllerMethod(IOwinContext context, MvcQuery query, out bool success)
+        private async Task<bool> TryAuthenticate(IOwinContext context, MvcQuery query)
+        {
+            var needsAuthorization = _controllersMap[query.Controller].GetCustomAttributes(typeof(AuthorizeAttribute)).Any();
+            if (!needsAuthorization)
+            {
+                return true;
+            }
+
+            var authenticateResult = await context.Authentication.AuthenticateAsync("Cookie");
+            return authenticateResult != null && authenticateResult.Identity != null;
+        }
+
+        private async Task<MethodResult> TryRunControllerMethod(IOwinContext context, MvcQuery query)
         {
             var controllerType = _controllersMap[query.Controller];
             var instance = _container.Resolve(controllerType);
             var controllerMethod = controllerType.GetMethods().FirstOrDefault(method => method.Name == query.Method);
-            
+
             if (controllerMethod != null)
             {
-                success = true;
-
-                
                 var methodParameterValues = GetMethodParameterValues(context, query.Parameters, controllerMethod);
 
-                return controllerMethod.Invoke(instance, methodParameterValues);
+                return await Task.Run(() => new MethodResult { Result = controllerMethod.Invoke(instance, methodParameterValues), Success = true });
             }
             else
             {
-                success = false;
-                return null;
+                return new MethodResult { Result = false };
             }
+        }
+
+        private class MethodResult
+        {
+            public bool Success { get; set; }
+
+            public object Result { get; set; }
         }
 
         private static object[] GetMethodParameterValues(IOwinContext context, Dictionary<string, string> parameters, MethodInfo controllerMethod)
         {
-            var methodParameterValues = new object[] { };
-
-            if (controllerMethod.GetParameters().Any())
+            if (!controllerMethod.GetParameters().Any())
             {
-                var expandoObject = new ExpandoObject();
-                var dictionary = expandoObject as IDictionary<string, object>;
-
-                foreach (var parameter in parameters)
-                {
-                    dictionary.Add(parameter.Key.Dehumanize().Replace(" ", string.Empty), parameter.Value);
-                }
-
-                dictionary.Add("Context", context);
-
-                methodParameterValues = new object[] { expandoObject };
-
-                context.Authentication.SignIn();
+                return new object[] { };
             }
 
-            return methodParameterValues;
+            var expandoObject = new ExpandoObject();
+            var dictionary = expandoObject as IDictionary<string, object>;
+
+            foreach (var parameter in parameters)
+            {
+                dictionary.Add(parameter.Key.Dehumanize().Replace(" ", string.Empty), parameter.Value);
+            }
+
+            dictionary.Add("Context", context);
+
+            return new object[] { expandoObject };
         }
 
         private void LoadAssemblyControllers(Assembly assembly)

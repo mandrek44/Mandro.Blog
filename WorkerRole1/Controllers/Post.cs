@@ -40,5 +40,14 @@ namespace Mandro.Blog.Worker.Controllers
         {
             _repository.UpdatePost(new BlogPost() { Content = editPost.Content, Title = editPost.Title, RowKey = editPost.RowKey, PartitionKey = editPost.PartitionKey});
         }
+
+        public dynamic GetPost(dynamic postQuery)
+        {
+            var permalinkTitle = postQuery.Param1;
+
+            BlogPost post = _repository.FindPostByPermalink(permalinkTitle);
+
+            return new { Post = post };
+        }
     }
 }

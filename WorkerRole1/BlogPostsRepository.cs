@@ -54,5 +54,11 @@ namespace Mandro.Blog.Worker
 
             blogPostsTable.Execute(TableOperation.Merge(post));
         }
+
+        public BlogPost FindPostByPermalink(string permalinkTitle)
+        {
+            // TODO: Implement later
+            return GetPosts().First();
+        }
     }
 }
