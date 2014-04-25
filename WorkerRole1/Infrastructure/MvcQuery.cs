@@ -16,72 +16,105 @@ namespace Mandro.Blog.Worker.Infrastructure
 
         public static async Task<MvcQuery> ParseAsync(IOwinRequest request, IDictionary<string, Type> controllersMap)
         {
-            var methodName = request.Method.ToLower().Pascalize();
-
-            var query = request.Path.Value;
-            var mvcQuery = new MvcQuery();
-            
-            var potentialMethodName = string.Empty;
-            var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
-                
-            if (query == "/")
-            {
-                mvcQuery.Controller = DefaultController;
-                mvcQuery.Method = methodName + DefaultControllerMethod;
-            }
-            else
-            {
-                if (!queryParts.Any())
-                {
-                    return null;
-                }
-
-                var controllerName = queryParts.Dequeue();
-                if (!controllersMap.ContainsKey(controllerName))
-                {
-                    return null;
-                }
-
-                mvcQuery.Controller = controllerName;
-
-                
-                if (queryParts.Any())
-                {
-                    potentialMethodName = queryParts.Dequeue();
-                    if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
-                    {
-                        mvcQuery.Method = methodName + potentialMethodName;
-                        potentialMethodName = string.Empty;
-                    }
-                    else
-                    {
-                        mvcQuery.Method = methodName + DefaultControllerMethod;
-                    }
-                }
-                else
-                {
-                    mvcQuery.Method = methodName + DefaultControllerMethod;
-                }
-            }
-
-            var formCollection = await request.ReadFormAsync();
-            mvcQuery.Parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
-
-            int paramIndex = 1;
-            if (potentialMethodName != string.Empty)
-            {
-                mvcQuery.Parameters.Add("Param" + paramIndex++, potentialMethodName);
-            }
-                    
-            while (queryParts.Any())
-            {
-                mvcQuery.Parameters.Add("Param" + paramIndex++, queryParts.Dequeue());
-            }
-
-            return mvcQuery;
+            return new MvcQuery
+                   {
+                       Controller = GetControllerName(request, controllersMap), 
+                       Method = GetMethodName(request, controllersMap), 
+                       Parameters = await GetParameters(request, controllersMap)
+                   };
         }
 
-        public Dictionary<string, string> Parameters { get; set; }
+        private static async Task<IDictionary<string, string>> GetParameters(IOwinRequest request, IDictionary<string, Type> controllersMap)
+        {
+            var methodName = request.Method.ToLower().Pascalize();
+            var query = request.Path.Value;
+            var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
+
+            if (!queryParts.Any())
+            {
+                return new Dictionary<string, string>();
+            }
+
+            var controllerName = queryParts.Dequeue();
+            if (!controllersMap.ContainsKey(controllerName))
+            {
+                return new Dictionary<string, string>();
+            }
+
+            int paramIndex = 1;
+            var formCollection = await request.ReadFormAsync();
+            var parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
+
+            if (queryParts.Any())
+            {
+                var potentialMethodName = queryParts.Dequeue();
+                if (controllersMap[controllerName].GetMethods().All(method => method.Name != methodName + potentialMethodName))
+                {
+                    parameters.Add("Param" + paramIndex++, potentialMethodName);
+                }
+            }
+
+            while (queryParts.Any())
+            {
+                parameters.Add("Param" + paramIndex++, queryParts.Dequeue());
+            }
+
+            return parameters;
+        }
+
+        private static string GetControllerName(IOwinRequest request, IDictionary<string, Type> controllersMap)
+        {
+            var query = request.Path.Value;
+
+            if (query == "/")
+            {
+                return DefaultController;
+            }
+
+            var controllerName = query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+            if (!controllersMap.ContainsKey(controllerName))
+            {
+                return null;
+            }
+
+            return controllerName;
+        }
+
+        private static string GetMethodName(IOwinRequest request, IDictionary<string, Type> controllersMap)
+        {
+            var methodName = request.Method.ToLower().Pascalize();
+            var query = request.Path.Value;
+
+            if (query == "/")
+            {
+                return methodName + DefaultControllerMethod;
+            }
+
+            var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
+            if (!queryParts.Any())
+            {
+                return null;
+            }
+
+            var controllerName = queryParts.Dequeue();
+            if (!controllersMap.ContainsKey(controllerName))
+            {
+                return null;
+            }
+
+            if (queryParts.Any())
+            {
+                var potentialMethodName = queryParts.Dequeue();
+                if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
+                {
+                    return methodName + potentialMethodName;
+                }
+            }
+
+            return methodName + DefaultControllerMethod;
+        }
+
+        public IDictionary<string, string> Parameters { get; set; }
 
         public string Method { get; private set; }
 

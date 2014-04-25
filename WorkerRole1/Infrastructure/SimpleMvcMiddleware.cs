@@ -120,7 +120,7 @@ namespace Mandro.Blog.Worker.Infrastructure
             }
         }
 
-        private static object[] GetMethodParameterValues(IOwinContext context, Dictionary<string, string> parameters, MethodInfo controllerMethod)
+        private static object[] GetMethodParameterValues(IOwinContext context, IDictionary<string, string> parameters, MethodInfo controllerMethod)
         {
             if (!controllerMethod.GetParameters().Any())
             {
