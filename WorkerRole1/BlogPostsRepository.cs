@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
@@ -39,6 +40,7 @@ namespace Mandro.Blog.Worker
             var tableClient = storageAccount.CreateCloudTableClient();
             var blogPostsTable = tableClient.GetTableReference("BlogPosts");
 
+            blogPost.Permalink = GeneratePermalink(blogPost);
             blogPostsTable.Execute(TableOperation.Insert(blogPost));
         }
 
@@ -51,14 +53,23 @@ namespace Mandro.Blog.Worker
             var post = GetPost(blogPost.PartitionKey, blogPost.RowKey);
             post.Title = blogPost.Title;
             post.Content = blogPost.Content;
+            post.Permalink = GeneratePermalink(post);
 
             blogPostsTable.Execute(TableOperation.Merge(post));
         }
 
+        private string GeneratePermalink(BlogPost post)
+        {
+            return new Regex("[^a-zA-Z0-9]").Replace(post.Title, "");
+        }
+
         public BlogPost FindPostByPermalink(string permalinkTitle)
         {
-            // TODO: Implement later
-            return GetPosts().First();
+            var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("BlogStorage"));
+            var tableClient = storageAccount.CreateCloudTableClient();
+            var blogPostsTable = tableClient.GetTableReference("BlogPosts");
+
+            return blogPostsTable.CreateQuery<BlogPost>().Where(blogPost => blogPost.Permalink == permalinkTitle).FirstOrDefault();
         }
     }
 }

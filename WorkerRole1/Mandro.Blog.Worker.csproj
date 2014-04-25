@@ -140,7 +140,7 @@
     <None Include="Views\Home\GetIndex.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Views\Post\GetPost.cshtml">
+    <None Include="Views\Post\GetIndex.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\Post\GetEdit.cshtml">

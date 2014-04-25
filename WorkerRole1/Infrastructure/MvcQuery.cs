@@ -27,36 +27,52 @@ namespace Mandro.Blog.Worker.Infrastructure
             var mvcQuery = new MvcQuery();
 
             var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
-            if (queryParts.Any())
+            if (!queryParts.Any())
             {
-                var controllerName = queryParts.Dequeue();
-                if (controllersMap.ContainsKey(controllerName))
-                {
-                    mvcQuery.Controller = controllerName;
-
-                    if (queryParts.Any())
-                    {
-                        mvcQuery.Method = methodName + queryParts.Dequeue();
-                    }
-                    else
-                    {
-                        mvcQuery.Method = methodName + DefaultControllerMethod;
-                    }
-
-                    var formCollection = await request.ReadFormAsync();
-                    mvcQuery.Parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
-
-                    int paramIndex = 1;
-                    while (queryParts.Any())
-                    {
-                        mvcQuery.Parameters.Add("Param" + paramIndex++, queryParts.Dequeue());
-                    }
-
-                    return mvcQuery;
-                }
+                return null;
             }
 
-            return null;
+            var controllerName = queryParts.Dequeue();
+            if (!controllersMap.ContainsKey(controllerName))
+            {
+                return null;
+            }
+
+            mvcQuery.Controller = controllerName;
+
+            var potentialMethodName = string.Empty;
+            if (queryParts.Any())
+            {
+                potentialMethodName = queryParts.Dequeue();
+                if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
+                {
+                    mvcQuery.Method = methodName + potentialMethodName;
+                }
+                else
+                {
+                    mvcQuery.Method = methodName + DefaultControllerMethod;
+                }
+            }
+            else
+            {
+                mvcQuery.Method = methodName + DefaultControllerMethod;
+            }
+
+            var formCollection = await request.ReadFormAsync();
+            mvcQuery.Parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
+
+            int paramIndex = 1;
+            if (potentialMethodName != string.Empty)
+            {
+                mvcQuery.Parameters.Add("Param" + paramIndex++, potentialMethodName);
+            }
+                    
+            while (queryParts.Any())
+            {
+                mvcQuery.Parameters.Add("Param" + paramIndex++, queryParts.Dequeue());
+            }
+
+            return mvcQuery;
         }
 
         public Dictionary<string, string> Parameters { get; set; }

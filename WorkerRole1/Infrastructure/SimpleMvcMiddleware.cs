@@ -73,14 +73,26 @@ namespace Mandro.Blog.Worker.Infrastructure
 
         private async Task<bool> TryAuthenticate(IOwinContext context, MvcQuery query)
         {
-            var needsAuthorization = _controllersMap[query.Controller].GetCustomAttributes(typeof(AuthorizeAttribute)).Any();
-            if (!needsAuthorization)
+            var controllerType = _controllersMap[query.Controller];
+            var controllerMethod = controllerType.GetMethods().FirstOrDefault(method => method.Name == query.Method);
+
+            if (controllerType == null || controllerMethod == null)
             {
                 return true;
             }
 
-            var authenticateResult = await context.Authentication.AuthenticateAsync("Cookie");
-            return authenticateResult != null && authenticateResult.Identity != null;
+            if (NeedsAuthentication(controllerType) || NeedsAuthentication(controllerMethod))
+            {
+                var authenticateResult = await context.Authentication.AuthenticateAsync("Cookie");
+                return authenticateResult != null && authenticateResult.Identity != null;
+            }
+
+            return true;
+        }
+
+        private static bool NeedsAuthentication(ICustomAttributeProvider controllerType)
+        {
+            return controllerType.GetCustomAttributes(typeof(AuthorizeAttribute), true).Any();
         }
 
         private async Task<MethodResult> TryRunControllerMethod(IOwinContext context, MvcQuery query)
@@ -99,13 +111,6 @@ namespace Mandro.Blog.Worker.Infrastructure
             {
                 return new MethodResult { Result = false };
             }
-        }
-
-        private class MethodResult
-        {
-            public bool Success { get; set; }
-
-            public object Result { get; set; }
         }
 
         private static object[] GetMethodParameterValues(IOwinContext context, Dictionary<string, string> parameters, MethodInfo controllerMethod)
@@ -139,6 +144,13 @@ namespace Mandro.Blog.Worker.Infrastructure
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterAssemblyTypes(typeof(SimpleMvcMiddleware).Assembly).AsSelf().AsImplementedInterfaces();
             _container = containerBuilder.Build();
+        }
+
+        private class MethodResult
+        {
+            public bool Success { get; set; }
+
+            public object Result { get; set; }
         }
     }
 }
