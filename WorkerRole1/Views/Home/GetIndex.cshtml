@@ -5,33 +5,15 @@
 @{
 
     Layout = "Views/Shared/_Layout.cshtml";
-    var markdown = new Markdown();
 }
 
 <div class="posts">
     <h1 class="content-subhead">Recent Posts</h1>
     @foreach (var blogPost in @Model.Posts)
     {
-
-        <section class="post">
-            <header class="post-header">
-                <h2 class="post-title"><a href="/Post/@blogPost.Permalink">@blogPost.Title</a></h2>
-                <p class="post-meta">
-                    On @blogPost.Created.ToShortDateString() @if (Model.IsLogged)
-                    {
-                        <a href="/Post/Edit/@blogPost.PartitionKey/@blogPost.RowKey">Edit</a>
-                    }
-
-                </p>
-            </header>
-            <div class="post-description">
-                <p>
-                    @Raw(markdown.Transform(blogPost.Content))
-                </p>
-            </div>
-        </section>
-
+        @Include("Views/Shared/SinglePost.cshtml", blogPost)       
     }
+
     @{
     /*
     <section class="post">

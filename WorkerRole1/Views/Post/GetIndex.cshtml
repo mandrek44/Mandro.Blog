@@ -1,27 +1,9 @@
 ﻿@model dynamic
-@using System
-@using Mandro.Blog.Worker.Controllers
-@using MarkdownSharp
 @{
 
     Layout = "Views/Shared/_Layout.cshtml";
-    var markdown = new Markdown();
 }
 
 <div class="posts">
-    <section class="post">
-        <header class="post-header">
-            @{/*<img class="post-avatar" alt="Eric Ferraiuolo&#x27;s avatar" height="48" width="48" src="img/common/ericf-avatar.png">*/}
-            <h2 class="post-title">@Model.Post.Title</h2>
-            <p class="post-meta">
-                On @Model.Post.Created.ToShortDateString()
-            </p>
-        </header>
-        <div class="post-description">
-            <p>
-                @Raw(markdown.Transform(Model.Post.Content))
-            </p>
-        </div>
-    </section>
-
+    @Include("Views/Shared/SinglePost.cshtml", Model.Post)
 </div>

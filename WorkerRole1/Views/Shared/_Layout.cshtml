@@ -1,12 +1,6 @@
 ﻿@model dynamic
 @using System
 @using Mandro.Blog.Worker.Controllers
-@using MarkdownSharp
-@{
-
-    Layout = null;
-    var markdown = new Markdown();
-}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,7 +29,7 @@
         <div class="sidebar pure-u-1 pure-u-med-1-4">
             <div class="header">
                 <hgroup>
-                    <h1 class="brand-title">Marcin Drobik</h1>
+                    <h1 class="brand-title"><a href="/">Marcin Drobik</a></h1>
                     <h2 class="brand-tagline">software journeyman notes</h2>
                 </hgroup>
                 @{

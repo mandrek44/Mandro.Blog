@@ -33,16 +33,10 @@ namespace Mandro.Blog.Worker.Infrastructure
             InitializeContainer();
             LoadAssemblyControllers(typeof(SimpleMvcMiddleware).Assembly);
 
-            string viewPathTemplate = "SelfHost.Views.{0}";
-            var templateConfig = new TemplateServiceConfiguration
-                                 {
-                                     Resolver = new DelegateTemplateResolver(
-                                         name =>
-                                         {
-                                             return File.ReadAllText(name);
-                                         })
-                                 };
-            Razor.SetTemplateService(new TemplateService(templateConfig));
+            Razor.SetTemplateService(new TemplateService(new TemplateServiceConfiguration
+                                                         {
+                                                             Resolver = new DelegateTemplateResolver(File.ReadAllText)
+                                                         }));
         }
 
         public override async Task Invoke(IOwinContext context)
