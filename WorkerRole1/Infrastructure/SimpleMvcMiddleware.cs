@@ -13,6 +13,8 @@ using Humanizer;
 using Microsoft.Owin;
 
 using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
 
 namespace Mandro.Blog.Worker.Infrastructure
 {
@@ -30,6 +32,17 @@ namespace Mandro.Blog.Worker.Infrastructure
         {
             InitializeContainer();
             LoadAssemblyControllers(typeof(SimpleMvcMiddleware).Assembly);
+
+            string viewPathTemplate = "SelfHost.Views.{0}";
+            var templateConfig = new TemplateServiceConfiguration
+                                 {
+                                     Resolver = new DelegateTemplateResolver(
+                                         name =>
+                                         {
+                                             return File.ReadAllText(name);
+                                         })
+                                 };
+            Razor.SetTemplateService(new TemplateService(templateConfig));
         }
 
         public override async Task Invoke(IOwinContext context)

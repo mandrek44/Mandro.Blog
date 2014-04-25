@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 
+using Microsoft.Owin;
+
 namespace Mandro.Blog.Worker.Controllers
 {
     public class Home
@@ -11,9 +13,19 @@ namespace Mandro.Blog.Worker.Controllers
             _blogPostsRepository = blogPostsRepository;
         }
 
-        public dynamic GetIndex()
+        public dynamic GetIndex(dynamic environment)
         {
-            return new { Posts = _blogPostsRepository.GetPosts().OrderByDescending(post => post.Created).ToArray() };
+            var owinContext = environment.Context as IOwinContext;
+
+            return new { Posts = _blogPostsRepository.GetPosts().OrderByDescending(post => post.Created).ToArray(), IsLogged = owinContext.IsSignedIn() };
+        }
+    }
+
+    public static class OwinExtensions
+    {
+        public static bool IsSignedIn(this IOwinContext context)
+        {
+            return context.Authentication.User != null;
         }
     }
 }

@@ -19,43 +19,49 @@ namespace Mandro.Blog.Worker.Infrastructure
             var methodName = request.Method.ToLower().Pascalize();
 
             var query = request.Path.Value;
+            var mvcQuery = new MvcQuery();
+            
+            var potentialMethodName = string.Empty;
+            var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
+                
             if (query == "/")
             {
-                return new MvcQuery { Controller = DefaultController, Method = methodName + DefaultControllerMethod };
+                mvcQuery.Controller = DefaultController;
+                mvcQuery.Method = methodName + DefaultControllerMethod;
             }
-
-            var mvcQuery = new MvcQuery();
-
-            var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
-            if (!queryParts.Any())
+            else
             {
-                return null;
-            }
-
-            var controllerName = queryParts.Dequeue();
-            if (!controllersMap.ContainsKey(controllerName))
-            {
-                return null;
-            }
-
-            mvcQuery.Controller = controllerName;
-
-            var potentialMethodName = string.Empty;
-            if (queryParts.Any())
-            {
-                potentialMethodName = queryParts.Dequeue();
-                if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
+                if (!queryParts.Any())
                 {
-                    mvcQuery.Method = methodName + potentialMethodName;
+                    return null;
+                }
+
+                var controllerName = queryParts.Dequeue();
+                if (!controllersMap.ContainsKey(controllerName))
+                {
+                    return null;
+                }
+
+                mvcQuery.Controller = controllerName;
+
+                
+                if (queryParts.Any())
+                {
+                    potentialMethodName = queryParts.Dequeue();
+                    if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
+                    {
+                        mvcQuery.Method = methodName + potentialMethodName;
+                        potentialMethodName = string.Empty;
+                    }
+                    else
+                    {
+                        mvcQuery.Method = methodName + DefaultControllerMethod;
+                    }
                 }
                 else
                 {
                     mvcQuery.Method = methodName + DefaultControllerMethod;
                 }
-            }
-            else
-            {
-                mvcQuery.Method = methodName + DefaultControllerMethod;
             }
 
             var formCollection = await request.ReadFormAsync();

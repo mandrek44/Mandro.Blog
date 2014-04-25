@@ -2,89 +2,29 @@
 @using MarkdownSharp
 @{
 
-    Layout = null;
+    Layout = "Views/Shared/_Layout.cshtml";
     var markdown = new Markdown();
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marcin Drobik</title>
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure.css">
 
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="/css/main-grid-old-ie.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="/css/main-grid.css">
-    <!--<![endif]-->
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="/css/layouts/blog-old-ie.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="/css/layouts/blog.css">
-    <!--<![endif]-->
-
-</head>
-<body>
-    <div id="layout" class="pure-g">
-        <div class="sidebar pure-u-1 pure-u-med-1-4">
-            <div class="header">
-                <hgroup>
-                    <h1 class="brand-title">Marcin Drobik</h1>
-                    <h2 class="brand-tagline">software journeyman notes</h2>
-                </hgroup>
+<div class="posts">
+    <form class="pure-form pure-form-aligned" action="/Post/Edit" method="POST">
+        <fieldset>
+            <input name="RowKey" value="@Model.Post.RowKey" type="hidden" />
+            <input name="PartitionKey" value="@Model.Post.PartitionKey" type="hidden" />
+            <div class="pure-control-group">
+                <label for="name">Title</label>
+                <input id="name" name="title" type="text" placeholder="Title" value="@Model.Post.Title">
             </div>
-        </div>
 
-        <div class="content pure-u-1 pure-u-med-3-4">
-            <div>
-                <!-- A wrapper for all the blog posts -->
-
-                <div class="posts">
-                    <form class="pure-form pure-form-aligned" action="/Post/Edit" method="POST">
-                        <fieldset>
-                            <input name="RowKey" value="@Model.Post.RowKey" type="hidden"/>
-                            <input name="PartitionKey" value="@Model.Post.PartitionKey" type="hidden" />
-                            <div class="pure-control-group">
-                                <label for="name">Title</label>
-                                <input id="name" name="title" type="text" placeholder="Title" value="@Model.Post.Title">
-                            </div>
-
-                            <div class="pure-control-group">
-                                <label for="text">Content</label>
-                                <textarea id="text" name="content" placeholder="Content" rows="10" cols="80" style="font-family: courier;">@Model.Post.Content</textarea>
-                            </div>
-
-                            <div class="pure-controls">
-                                <button type="submit" class="pure-button pure-button-primary">Submit</button>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-                <div class="footer">
-                    <div class="pure-menu pure-menu-horizontal pure-menu-open">
-                        <ul>
-                            <li><a href="https://github.com/mandrek44/">GitHub</a></li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="pure-control-group">
+                <label for="text">Content</label>
+                <textarea id="text" name="content" placeholder="Content" rows="10" cols="80" style="font-family: courier;">@Model.Post.Content</textarea>
             </div>
-        </div>
-    </div>
-    <script src="http://yui.yahooapis.com/3.14.1/build/yui/yui.js"></script>
-    <script>
-        YUI().use('node-base', 'node-event-delegate', function (Y) {
-            // This just makes sure that the href="#" attached to the <a> elements
-            // don't scroll you back up the page.
-            Y.one('body').delegate('click', function (e) {
-                e.preventDefault();
-            }, 'a[href="#"]');
-        });
-    </script>
 
-
-</body>
-</html>
+            <div class="pure-controls">
+                <button type="submit" class="pure-button pure-button-primary">Submit</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
