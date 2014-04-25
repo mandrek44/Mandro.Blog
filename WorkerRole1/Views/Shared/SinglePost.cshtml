@@ -10,7 +10,7 @@
 <section class="post">
     <header class="post-header">
         @{/*<img class="post-avatar" alt="Eric Ferraiuolo&#x27;s avatar" height="48" width="48" src="img/common/ericf-avatar.png">*/}
-        <h2 class="post-title">@Model.Title</h2>
+        <h2 class="post-title"><a href="/Post/@Model.Permalink">@Model.Title</a></h2>
         <p class="post-meta">
             On @Model.Created.ToShortDateString()
         </p>

@@ -53,7 +53,7 @@ namespace Mandro.Blog.Worker.Controllers
 
             BlogPost post = _repository.FindPostByPermalink(permalinkTitle);
 
-            return new { Post = post };
+            return new { Post = post, IsLogged = (postQuery.Context as IOwinContext).IsSignedIn() };
         }
     }
 }

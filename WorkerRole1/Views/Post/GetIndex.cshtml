@@ -5,5 +5,9 @@
 }
 
 <div class="posts">
+    @if (Model.IsLogged)
+    {
+        <a href="/Post/Edit/@Model.Post.PartitionKey/@Model.Post.RowKey">Edit</a>
+    }
     @Include("Views/Shared/SinglePost.cshtml", Model.Post)
 </div>
