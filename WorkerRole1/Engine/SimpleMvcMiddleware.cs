@@ -66,6 +66,11 @@ namespace Mandro.Blog.Worker.Engine
                     context.Response.Redirect((methodResult.Result as Uri).ToString());
                     return;
                 }
+                else if (methodResult.Result is byte[])
+                {
+                    await context.Response.WriteAsync(methodResult.Result as byte[]);
+                    return;
+                }
 
                 var templateContent = await ReadViewTemplate(query);
                 var result = await Task.Run(() => Razor.Parse(templateContent, methodResult.Result));

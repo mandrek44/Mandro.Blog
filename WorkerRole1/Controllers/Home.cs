@@ -34,9 +34,9 @@ namespace Mandro.Blog.Worker.Controllers
             var blogPosts = indexResponse.Posts as BlogPost[];
 
             var owinContext = environment.Context as IOwinContext;
-            owinContext.Response.ContentType = "text/xml";
+            owinContext.Response.ContentType = "application/rss+xml; charset=utf-8";
 
-            var author = new SyndicationPerson("", "Marcin Drobik", "http://marcindrobik.pl");
+            var author = new SyndicationPerson("admin@marcindrobik.pl", "Marcin Drobik", "http://marcindrobik.pl");
             var category = new SyndicationCategory("Software Development");
             var markdown = new MarkdownSharp.Markdown();
 
@@ -56,7 +56,6 @@ namespace Mandro.Blog.Worker.Controllers
 
                     return item;
                 });
-
             
             var feed = new SyndicationFeed();
             feed.Title = TextSyndicationContent.CreatePlaintextContent("marcindrobik.pl");
@@ -67,12 +66,15 @@ namespace Mandro.Blog.Worker.Controllers
             feed.Language = "en-US";
             feed.Items = syndicationItems;
 
-            var stringBuilder = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(stringBuilder, null);
-            feed.SaveAsRss20(writer);
-            writer.Flush();
+            using (var stream = new MemoryStream())
+            {
+                var settings = new XmlWriterSettings { Encoding = Encoding.UTF8, NewLineHandling = NewLineHandling.Entitize, NewLineOnAttributes = true, Indent = true };
+                var writer = XmlWriter.Create(stream, settings);
+                feed.SaveAsRss20(writer);
+                writer.Flush();
 
-            return new { Content = stringBuilder.ToString() };
+                return stream.ToArray();
+            }
         }
     }
 }
