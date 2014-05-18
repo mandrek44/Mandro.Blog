@@ -2,6 +2,8 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 
+using Mandro.Blog.Worker.Engine;
+
 using Microsoft.Owin;
 using Microsoft.Owin.Diagnostics;
 using Microsoft.Owin.Security;

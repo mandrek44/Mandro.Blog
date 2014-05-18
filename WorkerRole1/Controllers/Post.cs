@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Net.Configuration;
 
+using Mandro.Blog.Worker.Engine;
 using Mandro.Blog.Worker.Infrastructure;
 
 using Microsoft.Owin;
 
 namespace Mandro.Blog.Worker.Controllers
 {
-    
     public class Post
     {
         private readonly BlogPostsRepository _repository;
@@ -36,15 +38,18 @@ namespace Mandro.Blog.Worker.Controllers
             var partitionKey = editPostParams.Param1;
             var rowKey = editPostParams.Param2;
 
-            return new { Post = _repository.GetPost(partitionKey, rowKey) };            
+            return new { Post = _repository.GetPost(partitionKey, rowKey) };
         }
 
         [Authorize]
-        public void PostEdit(dynamic editPost)
+        public dynamic PostEdit(dynamic editPost)
         {
             var blogPost = new BlogPost() { Content = editPost.Content, Title = editPost.Title, RowKey = editPost.RowKey, PartitionKey = editPost.PartitionKey };
 
             _repository.UpdatePost(blogPost);
+            BlogPost post = _repository.GetPost(editPost.PartitionKey, editPost.RowKey);
+
+            return Redirect.To((Post controller) => controller.GetIndex, new object[] { post.Permalink });
         }
 
         public dynamic GetIndex(dynamic postQuery)

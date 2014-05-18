@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 
-using Microsoft.Owin;
+using Mandro.Blog.Worker.Engine;
+using Mandro.Blog.Worker.Infrastructure;
+
 using Microsoft.Owin.Security;
 
 namespace Mandro.Blog.Worker.Controllers
@@ -12,11 +14,17 @@ namespace Mandro.Blog.Worker.Controllers
 
         }
 
-        public void PostLogin(dynamic loginDetails)
+        [Authorize]
+        public void GetInfo()
+        {
+            
+        }
+
+        public dynamic PostLogin(dynamic loginDetails)
         {
             if (loginDetails.UserName != "Mandro" || loginDetails.Password != "957gNH4wEAe5ZpO2FGdG")
             {
-                return;
+                return null;
             }
 
             var claims = new[] { new Claim(ClaimTypes.Name, loginDetails.UserName) };
@@ -24,6 +32,8 @@ namespace Mandro.Blog.Worker.Controllers
 
             var context = loginDetails.Context.Authentication as IAuthenticationManager;
             context.SignIn(id);
+
+            return Redirect.To((Home controller) => controller.GetIndex);
         }
     }
 }

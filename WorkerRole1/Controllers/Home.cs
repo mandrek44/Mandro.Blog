@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 
+using Mandro.Blog.Worker.Infrastructure;
+
 using Microsoft.Owin;
 
 namespace Mandro.Blog.Worker.Controllers
@@ -18,14 +20,6 @@ namespace Mandro.Blog.Worker.Controllers
             var owinContext = environment.Context as IOwinContext;
 
             return new { Posts = _blogPostsRepository.GetPosts().OrderByDescending(post => post.Created).ToArray(), IsLogged = owinContext.IsSignedIn() };
-        }
-    }
-
-    public static class OwinExtensions
-    {
-        public static bool IsSignedIn(this IOwinContext context)
-        {
-            return context.Authentication.User != null;
         }
     }
 }

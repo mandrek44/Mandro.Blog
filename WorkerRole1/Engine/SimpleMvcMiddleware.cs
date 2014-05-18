@@ -10,13 +10,15 @@ using Autofac;
 
 using Humanizer;
 
+using Mandro.Blog.Worker.Infrastructure;
+
 using Microsoft.Owin;
 
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 
-namespace Mandro.Blog.Worker.Infrastructure
+namespace Mandro.Blog.Worker.Engine
 {
     public class SimpleMvcMiddleware : OwinMiddleware
     {
@@ -43,7 +45,7 @@ namespace Mandro.Blog.Worker.Infrastructure
         {
             var query = await MvcQuery.ParseAsync(context.Request, _controllersMap);
 
-            if (query == null)
+            if (query == null || query.Controller == null)
             {
                 await Next.Invoke(context);
                 return;
@@ -59,6 +61,12 @@ namespace Mandro.Blog.Worker.Infrastructure
             var methodResult = await TryRunControllerMethod(context, query);
             if (methodResult.Success)
             {
+                if (methodResult.Result is Uri)
+                {
+                    context.Response.Redirect((methodResult.Result as Uri).ToString());
+                    return;
+                }
+
                 var templateContent = await ReadViewTemplate(query);
                 var result = await Task.Run(() => Razor.Parse(templateContent, methodResult.Result));
 
@@ -158,6 +166,118 @@ namespace Mandro.Blog.Worker.Infrastructure
             public bool Success { get; set; }
 
             public object Result { get; set; }
+        }
+
+        private class MvcQuery
+        {
+            private const string DefaultController = "Home";
+            private const string DefaultControllerMethod = "Index";
+
+            public static async Task<MvcQuery> ParseAsync(IOwinRequest request, IDictionary<string, Type> controllersMap)
+            {
+                return new MvcQuery
+                {
+                    Controller = GetControllerName(request, controllersMap),
+                    Method = GetMethodName(request, controllersMap),
+                    Parameters = await GetParameters(request, controllersMap)
+                };
+            }
+
+            private static async Task<IDictionary<string, string>> GetParameters(IOwinRequest request, IDictionary<string, Type> controllersMap)
+            {
+                var methodName = request.Method.ToLower().Pascalize();
+                var query = request.Path.Value;
+                var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
+
+                if (!queryParts.Any())
+                {
+                    return new Dictionary<string, string>();
+                }
+
+                var controllerName = queryParts.Dequeue();
+                if (!controllersMap.ContainsKey(controllerName))
+                {
+                    return new Dictionary<string, string>();
+                }
+
+                int paramIndex = 1;
+                var formCollection = await request.ReadFormAsync();
+                var parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
+
+                if (queryParts.Any())
+                {
+                    var potentialMethodName = queryParts.Dequeue();
+                    if (controllersMap[controllerName].GetMethods().All(method => method.Name != methodName + potentialMethodName))
+                    {
+                        parameters.Add("Param" + paramIndex++, potentialMethodName);
+                    }
+                }
+
+                while (queryParts.Any())
+                {
+                    parameters.Add("Param" + paramIndex++, queryParts.Dequeue());
+                }
+
+                return parameters;
+            }
+
+            private static string GetControllerName(IOwinRequest request, IDictionary<string, Type> controllersMap)
+            {
+                var query = request.Path.Value;
+
+                if (query == "/")
+                {
+                    return DefaultController;
+                }
+
+                var controllerName = query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+                if (!controllersMap.ContainsKey(controllerName))
+                {
+                    return null;
+                }
+
+                return controllerName;
+            }
+
+            private static string GetMethodName(IOwinRequest request, IDictionary<string, Type> controllersMap)
+            {
+                var methodName = request.Method.ToLower().Pascalize();
+                var query = request.Path.Value;
+
+                if (query == "/")
+                {
+                    return methodName + DefaultControllerMethod;
+                }
+
+                var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
+                if (!queryParts.Any())
+                {
+                    return null;
+                }
+
+                var controllerName = queryParts.Dequeue();
+                if (!controllersMap.ContainsKey(controllerName))
+                {
+                    return null;
+                }
+
+                if (queryParts.Any())
+                {
+                    var potentialMethodName = queryParts.Dequeue();
+                    if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
+                    {
+                        return methodName + potentialMethodName;
+                    }
+                }
+
+                return methodName + DefaultControllerMethod;
+            }
+
+            public IDictionary<string, string> Parameters { get; private set; }
+
+            public string Method { get; private set; }
+
+            public string Controller { get; private set; }
         }
     }
 }

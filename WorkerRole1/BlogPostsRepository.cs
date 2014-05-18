@@ -69,7 +69,9 @@ namespace Mandro.Blog.Worker
             var tableClient = storageAccount.CreateCloudTableClient();
             var blogPostsTable = tableClient.GetTableReference("BlogPosts");
 
-            return blogPostsTable.CreateQuery<BlogPost>().Where(blogPost => blogPost.Permalink == permalinkTitle).FirstOrDefault();
+            var fixedPermalink = new Regex("[^a-zA-Z0-9]").Replace(permalinkTitle, "");
+
+            return blogPostsTable.CreateQuery<BlogPost>().Where(blogPost => blogPost.Permalink == fixedPermalink).FirstOrDefault();
         }
     }
 }
