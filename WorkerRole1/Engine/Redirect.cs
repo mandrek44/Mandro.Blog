@@ -9,9 +9,8 @@ namespace Mandro.Blog.Worker.Engine
     {
         public static Uri To<T>(Expression<Func<T, Func<dynamic, dynamic>>> exprTree, object[] parameters = null)
         {
-            var controllerType = exprTree.Parameters[0].Type;
-
-            var method = (((exprTree.Body as UnaryExpression).Operand as MethodCallExpression).Object as ConstantExpression).Value as MethodInfo;
+            var controllerType = exprTree.Parameters.First().Type;
+            var method = (MethodInfo)((ConstantExpression)((MethodCallExpression)((UnaryExpression)exprTree.Body).Operand).Object).Value;
 
             return GetUrl(controllerType, method.Name, parameters);
         }
@@ -32,7 +31,7 @@ namespace Mandro.Blog.Worker.Engine
             {
                 return methodName.Substring("Get".Length);
             }
-            else if (methodName.StartsWith("Post"))
+            if (methodName.StartsWith("Post"))
             {
                 return methodName.Substring("Post".Length);
             }
