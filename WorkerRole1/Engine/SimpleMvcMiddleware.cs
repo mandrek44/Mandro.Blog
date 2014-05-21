@@ -59,24 +59,30 @@ namespace Mandro.Blog.Worker.Engine
             }
 
             var methodResult = await TryRunControllerMethod(context, query);
-            if (methodResult.Success)
+            if (!methodResult.Success)
             {
-                if (methodResult.Result is Uri)
-                {
-                    context.Response.Redirect((methodResult.Result as Uri).ToString());
-                    return;
-                }
-                else if (methodResult.Result is byte[])
-                {
-                    await context.Response.WriteAsync(methodResult.Result as byte[]);
-                    return;
-                }
-
-                var templateContent = await ReadViewTemplate(query);
-                var result = await Task.Run(() => Razor.Parse(templateContent, methodResult.Result));
-
-                await context.Response.WriteAsync(result);
+                await Next.Invoke(context);
+                return;
             }
+
+            // Check if method returned something we can handle:
+            // - Uri will cause redirection
+            // - Byte array will cause immediate write to response
+            if (methodResult.Result is Uri)
+            {
+                context.Response.Redirect((methodResult.Result as Uri).ToString());
+                return;
+            }
+            else if (methodResult.Result is byte[])
+            {
+                await context.Response.WriteAsync(methodResult.Result as byte[]);
+                return;
+            }
+
+            var templateContent = await ReadViewTemplate(query);
+            var result = await Task.Run(() => Razor.Parse(templateContent, methodResult.Result));
+
+            await context.Response.WriteAsync(result);
 
             await Next.Invoke(context);
         }
@@ -190,7 +196,7 @@ namespace Mandro.Blog.Worker.Engine
 
             private static async Task<IDictionary<string, string>> GetParameters(IOwinRequest request, IDictionary<string, Type> controllersMap)
             {
-                var methodName = request.Method.ToLower().Pascalize();
+                var httpMethod = request.Method.ToLower().Pascalize();
                 var query = request.Path.Value;
                 var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
 
@@ -212,7 +218,7 @@ namespace Mandro.Blog.Worker.Engine
                 if (queryParts.Any())
                 {
                     var potentialMethodName = queryParts.Dequeue();
-                    if (controllersMap[controllerName].GetMethods().All(method => method.Name != methodName + potentialMethodName))
+                    if (controllersMap[controllerName].GetMethods().All(method => method.Name != httpMethod + potentialMethodName))
                     {
                         parameters.Add("Param" + paramIndex++, potentialMethodName);
                     }
@@ -246,12 +252,12 @@ namespace Mandro.Blog.Worker.Engine
 
             private static string GetMethodName(IOwinRequest request, IDictionary<string, Type> controllersMap)
             {
-                var methodName = request.Method.ToLower().Pascalize();
+                var httpMethod = request.Method.ToLower().Pascalize();
                 var query = request.Path.Value;
 
                 if (query == "/")
                 {
-                    return methodName + DefaultControllerMethod;
+                    return httpMethod + DefaultControllerMethod;
                 }
 
                 var queryParts = new Queue<string>(query.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries));
@@ -269,13 +275,13 @@ namespace Mandro.Blog.Worker.Engine
                 if (queryParts.Any())
                 {
                     var potentialMethodName = queryParts.Dequeue();
-                    if (controllersMap[controllerName].GetMethods().Any(method => method.Name == methodName + potentialMethodName))
+                    if (controllersMap[controllerName].GetMethods().Any(method => method.Name == httpMethod + potentialMethodName))
                     {
-                        return methodName + potentialMethodName;
+                        return httpMethod + potentialMethodName;
                     }
                 }
 
-                return methodName + DefaultControllerMethod;
+                return httpMethod + DefaultControllerMethod;
             }
 
             public IDictionary<string, string> Parameters { get; private set; }
