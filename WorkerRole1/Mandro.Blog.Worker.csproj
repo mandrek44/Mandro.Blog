@@ -98,9 +98,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlogPost.cs" />
+    <Compile Include="Model\BlogFile.cs" />
+    <Compile Include="Infrastructure\HttpMultiPart.cs" />
+    <Compile Include="Controllers\IFilesRepository.cs" />
+    <Compile Include="Infrastructure\EnumerableExtensions.cs" />
+    <Compile Include="Infrastructure\StreamSearcher.cs" />
+    <Compile Include="Model\BlogPost.cs" />
     <Compile Include="BlogPostsRepository.cs" />
     <Compile Include="Controllers\Account.cs" />
+    <Compile Include="Controllers\Files.cs" />
     <Compile Include="Infrastructure\OwinExtensions.cs" />
     <Compile Include="Engine\Redirect.cs" />
     <Compile Include="Infrastructure\IRedirection.cs" />
@@ -121,6 +127,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\Account\GetLogin.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Files\GetUpload.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Views\Files\GetIndex.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Views\Home\GetRss.cshtml">

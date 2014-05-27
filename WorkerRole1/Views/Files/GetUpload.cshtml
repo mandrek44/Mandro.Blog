@@ -1,0 +1,14 @@
+﻿@model dynamic
+@using Mandro.Blog.Worker.Controllers
+@using Mandro.Blog.Worker.Engine
+@{
+
+    Layout = "Views/Shared/_Layout.cshtml";
+}
+
+<div class="files">
+    <form action="@Redirect.To((Files controller) => controller.PostUpload)" method="POST" enctype="multipart/form-data">
+        <input name="image" type="file">
+        <input type="submit" value="Upload Image" />
+    </form>
+</div>

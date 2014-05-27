@@ -212,8 +212,12 @@ namespace Mandro.Blog.Worker.Engine
                 }
 
                 int paramIndex = 1;
-                var formCollection = await request.ReadFormAsync();
-                var parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
+                Dictionary<string, string> parameters = new Dictionary<string, string>();
+                if (request.ContentType == "application/x-www-form-urlencoded")
+                {
+                    var formCollection = await request.ReadFormAsync();
+                    parameters = formCollection.ToDictionary(key => key.Key, value => value.Value.FirstOrDefault());
+                }
 
                 if (queryParts.Any())
                 {

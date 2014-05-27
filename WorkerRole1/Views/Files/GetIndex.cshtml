@@ -1,0 +1,17 @@
+﻿@model dynamic
+@using System
+@using Mandro.Blog.Worker.Controllers
+@using MarkdownSharp
+@{
+
+    Layout = "Views/Shared/_Layout.cshtml";
+}
+
+<div class="files">
+    <ul>
+        @foreach (var file in @Model.Files)
+        {
+            <li><a href="@file.Uri">@file.Uri</a></li>
+        }
+    </ul>
+</div>
