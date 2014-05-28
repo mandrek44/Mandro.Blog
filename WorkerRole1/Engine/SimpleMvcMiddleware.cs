@@ -212,7 +212,7 @@ namespace Mandro.Blog.Worker.Engine
                 }
 
                 int paramIndex = 1;
-                Dictionary<string, string> parameters = new Dictionary<string, string>();
+                var parameters = new Dictionary<string, string>();
                 if (request.ContentType == "application/x-www-form-urlencoded")
                 {
                     var formCollection = await request.ReadFormAsync();

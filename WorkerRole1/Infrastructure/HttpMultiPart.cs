@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Mandro.Utils;
+
 namespace Mandro.Blog.Worker.Infrastructure
 {
     public class HttpMultiPart
