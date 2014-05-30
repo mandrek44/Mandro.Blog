@@ -38,8 +38,9 @@
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.23.1\lib\portable-win+net40+sl50+wp8\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Mandro.Utils">
-      <HintPath>..\packages\Mandro.Utils.1.0.0\lib\net45\Mandro.Utils.dll</HintPath>
+    <Reference Include="Mandro.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Mandro.Utils.1.0.1\lib\net45\Mandro.Utils.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownSharp">
       <HintPath>..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
@@ -102,7 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\BlogFile.cs" />
-    <Compile Include="Infrastructure\HttpMultiPart.cs" />
     <Compile Include="Controllers\IFilesRepository.cs" />
     <Compile Include="Model\BlogPost.cs" />
     <Compile Include="BlogPostsRepository.cs" />

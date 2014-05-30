@@ -1,5 +1,6 @@
 ﻿using Mandro.Blog.Worker.Engine;
 using Mandro.Blog.Worker.Infrastructure;
+using Mandro.Utils.Web;
 
 using Microsoft.Owin;
 
@@ -34,9 +35,11 @@ namespace Mandro.Blog.Worker.Controllers
             if (!owinContext.Request.ContentType.StartsWith("multipart/form-data"))
                 return Redirect.To<Files>(controller => controller.GetIndex);
 
-            foreach (HttpMultiPart.File file in HttpMultiPart.GetFiles(owinContext.Request.Body, owinContext.Request.ContentType))
+            var multiPartStream = new MultiPartFormDataStream(owinContext.Request.Body, owinContext.Request.ContentType);
+
+            while (multiPartStream.SeekNextFile())
             {
-                _repository.AddFile(file.Content, file.Name);
+                _repository.AddFile(multiPartStream, multiPartStream.CurrentFileName);
             }
 
             return Redirect.To<Files>(controller => controller.GetIndex);
