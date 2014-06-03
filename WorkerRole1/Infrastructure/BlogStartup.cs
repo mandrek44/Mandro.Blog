@@ -13,7 +13,7 @@ using Owin;
 
 namespace Mandro.Blog.Worker.Infrastructure
 {
-    public class Startup
+    public class BlogStartup
     {
         public void Configuration(IAppBuilder appBuilder)
         {

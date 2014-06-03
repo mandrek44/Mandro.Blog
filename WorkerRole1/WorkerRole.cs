@@ -16,13 +16,13 @@ namespace Mandro.Blog.Worker
         {
             try
             {
-                // This is a sample worker implementation. Replace with your logic.
-                Trace.TraceInformation("WorkerRole1 entry point called");
+                Trace.TraceInformation("WorkerRole entry point called");
 
                 // Initialize the markdown here, before any Razor view uses it - without it Razor won't be able to load Markdown
                 new MarkdownSharp.Markdown();
 
-                using (WebApp.Start<Startup>("http://*:80"))
+                using (WebApp.Start<BlogStartup>("http://*:80"))
+                using (WebApp.Start<NuGetStartup>("http://*:8080"))
                 {
                     Trace.TraceInformation("Working");
                     while (true)

@@ -9,6 +9,7 @@
     </Imports>
     <Endpoints>
       <InputEndpoint name="Main" protocol="tcp" port="80" localPort="80" />
+      <InputEndpoint name="NuGet" protocol="tcp" port="8080" localPort="8080" />
     </Endpoints>
     <ConfigurationSettings>
       <Setting name="BlogStorage" />
