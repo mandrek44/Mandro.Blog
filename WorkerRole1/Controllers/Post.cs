@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Net.Configuration;
 
-using Mandro.Blog.Worker.Engine;
 using Mandro.Blog.Worker.Infrastructure;
+using Mandro.Owin.SimpleMVC;
 
 using Microsoft.Owin;
 

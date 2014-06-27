@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 
-using Mandro.Blog.Worker.Engine;
-using Mandro.Blog.Worker.Infrastructure;
+using Mandro.Owin.SimpleMVC;
 
 using Microsoft.Owin.Security;
 

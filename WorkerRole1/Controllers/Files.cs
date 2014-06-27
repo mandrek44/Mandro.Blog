@@ -1,5 +1,4 @@
-﻿using Mandro.Blog.Worker.Engine;
-using Mandro.Blog.Worker.Infrastructure;
+﻿using Mandro.Owin.SimpleMVC;
 using Mandro.Utils.Web;
 
 using Microsoft.Owin;
