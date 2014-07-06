@@ -1,5 +1,6 @@
 using Mandro.Blog.Worker.Infrastructure;
 using Mandro.NuGet;
+using Mandro.NuGet.Core;
 
 using Owin;
 
