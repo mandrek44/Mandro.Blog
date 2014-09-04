@@ -42,9 +42,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Humanizer.1.28.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Mandro.NuGet.Core, Version=1.0.18.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Mandro.NuGet.Core, Version=1.0.19.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Mandro.NuGet.Core.1.0.18.0\lib\net45\Mandro.NuGet.Core.dll</HintPath>
+      <HintPath>..\packages\Mandro.NuGet.Core.1.0.19.0\lib\net45\Mandro.NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="Mandro.Owin.SimpleMVC">
       <HintPath>..\packages\Mandro.Owin.SimpleMVC.1.0.3.0\lib\net45\Mandro.Owin.SimpleMVC.dll</HintPath>
