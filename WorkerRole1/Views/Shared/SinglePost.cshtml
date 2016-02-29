@@ -13,6 +13,11 @@
         <h2 class="post-title"><a href="/Post/@Model.Permalink">@Model.Title</a></h2>
         <p class="post-meta">
             On @Model.Created.ToShortDateString() | <a href="/Post/@Model.Permalink#disqus_thread ">0 Comments</a>
+            @if (!string.IsNullOrEmpty(Model.Category)) {
+                <text>
+                | Posted under <a href="/Category/@Model.Category"> @Model.Category</a>
+                </text>
+            }
         </p>
     </header>
     <div class="post-description">

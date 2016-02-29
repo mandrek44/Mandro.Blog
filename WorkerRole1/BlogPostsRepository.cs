@@ -47,6 +47,7 @@ namespace Mandro.Blog.Worker
             post.Title = blogPost.Title;
             post.Content = blogPost.Content;
             post.Permalink = GeneratePermalink(post);
+            post.Category = blogPost.Category;
 
             _blogPostsTable.Execute(TableOperation.Merge(post));
         }

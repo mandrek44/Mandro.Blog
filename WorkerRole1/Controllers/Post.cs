@@ -41,7 +41,7 @@ namespace Mandro.Blog.Worker.Controllers
         [Authorize]
         public dynamic PostEdit(dynamic editPost)
         {
-            var blogPost = new BlogPost() { Content = editPost.Content, Title = editPost.Title, RowKey = editPost.RowKey, PartitionKey = editPost.PartitionKey };
+            var blogPost = new BlogPost() { Content = editPost.Content, Title = editPost.Title, RowKey = editPost.RowKey, PartitionKey = editPost.PartitionKey, Category = editPost.Category};
 
             _repository.UpdatePost(blogPost);
             BlogPost post = _repository.GetPost(editPost.PartitionKey, editPost.RowKey);

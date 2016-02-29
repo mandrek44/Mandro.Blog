@@ -14,6 +14,8 @@ namespace Mandro.Blog.Worker
     {
         public override void Run()
         {
+            IDisposable blogWebApp = null;
+            IDisposable nugetWebApp = null;
             try
             {
                 Trace.TraceInformation("WorkerRole entry point called");
@@ -21,21 +23,40 @@ namespace Mandro.Blog.Worker
                 // Initialize the markdown here, before any Razor view uses it - without it Razor won't be able to load Markdown
                 new MarkdownSharp.Markdown();
 
-                using (WebApp.Start<BlogStartup>("http://*:80"))
-                using (WebApp.Start<NuGetStartup>("http://*:8080"))
+                try
                 {
-                    Trace.TraceInformation("Working");
-                    while (true)
-                    {
-                        Thread.Sleep(10000);
-
-                    }
+                    blogWebApp = WebApp.Start<BlogStartup>("http://*:31453");
                 }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.ToString());
+                }
+
+                try
+                {
+                    nugetWebApp = WebApp.Start<NuGetStartup>("http://*:8080");
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.ToString());
+                }
+
+                Trace.TraceInformation("Working");
+                while (true)
+                {
+                    Thread.Sleep(10000);
+                }
+
             }
             catch (Exception e)
             {
                 Trace.TraceError(e.ToString());
                 throw;
+            }
+            finally
+            {
+                blogWebApp?.Dispose();
+                nugetWebApp?.Dispose();
             }
         }
 

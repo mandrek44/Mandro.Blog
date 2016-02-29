@@ -39,9 +39,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Humanizer.1.27.0\lib\portable-win+net40+sl50+wp8\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Mandro.Owin.SimpleMVC, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Mandro.Owin.SimpleMVC.1.0.3.0\lib\net45\Mandro.Owin.SimpleMVC.dll</HintPath>
+    <Reference Include="Mandro.Owin.SimpleMVC, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mandro.Owin.SimpleMVC.1.0.7.0\lib\net45\Mandro.Owin.SimpleMVC.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Owin, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

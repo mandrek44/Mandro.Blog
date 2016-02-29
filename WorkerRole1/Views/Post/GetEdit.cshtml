@@ -1,7 +1,7 @@
 ﻿@model dynamic
 @{
 
-    Layout = "Views/Shared/_Layout.cshtml";
+    Layout = "Views/Shared/_SimpleLayout.cshtml";
 }
 
 <div class="posts">
@@ -12,6 +12,11 @@
             <div class="pure-control-group">
                 <label for="name">Title</label>
                 <input id="name" name="title" type="text" placeholder="Title" value="@Model.Post.Title">
+            </div>
+
+            <div class="pure-control-group">
+                <label for="category">Category</label>
+                <input id="category" name="category" type="text" placeholder="Category" value="@Model.Post.Category">
             </div>
 
             <div class="pure-control-group">

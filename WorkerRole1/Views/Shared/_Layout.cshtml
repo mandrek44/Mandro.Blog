@@ -2,74 +2,167 @@
 @using System
 @using Mandro.Blog.Worker.Controllers
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marcin Drobik</title>
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="/Home/Rss" />
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <style>
+        header.main {
+            font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: url(img/intro_opt.jpg) no-repeat top center scroll;
+            background-size: cover;
+            height: 90%;
+            display: table;
+            width: 100%;
+            text-transform: uppercase;
+        }
 
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="/css/main-grid-old-ie.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="/css/main-grid.css">
-    <!--<![endif]-->
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="/css/layouts/blog-old-ie.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="/css/layouts/blog.css">
-    <!--<![endif]-->
+        .header-info {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            width: 1200px;
+        }
 
+        .section-header {
+            background-color: rgb(61, 79, 93);
+            min-height: 10%;
+            text-align: center;
+        }
+
+        section.about-me p {
+            font-size: 20px;
+        }
+
+        .container h1, .container h3 {
+            color: rgb(176, 202, 219);
+        }
+
+        header h1 {
+            font-weight: bold;
+        }
+
+        .header-info-content {
+            background-color: rgba(61, 79, 93, 0.67);
+        }
+
+        .post {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .post-header {
+            background-color: rgba(61, 79, 93, 0.37);
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div id="layout" class="pure-g">
-        <div class="sidebar pure-u-1 pure-u-med-1-4">
-            <div class="header">
-                <hgroup>
-                    <h1 class="brand-title"><a href="/">Marcin Drobik</a></h1>
-                    <h2 class="brand-tagline">software journeyman notes</h2>
-                </hgroup>
-                @{
-    /*<nav class="nav">
-                    <ul class="nav-list">
-                        <li class="nav-item">
-                            <a class="pure-button" href="http://purecss.io">Pure</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="pure-button" href="http://yuilibrary.com">YUI Library</a>
-                        </li>
-                    </ul>
-                </nav>*/
-                }
-            </div>
-        </div>
-
-        <div class="content pure-u-1 pure-u-med-3-4">
-            <div>
-                <!-- A wrapper for all the blog posts -->
-                
-                @RenderBody()
-                
-                <div class="footer">
-                    <div class="pure-menu pure-menu-horizontal pure-menu-open">
-                        <ul>
-                            <li style="margin: 0"><a href="https://github.com/mandrek44/"><img style="vertical-align: middle;" src="/img/common/octocat-28.png"/> GitHub</a></li>
-                            <li style="margin: 0"><a href="https://twitter.com/mandrek44"><img style="vertical-align: middle;" src="/img/common/twitter-28.png" /> Twitter</a></li>
-                            <li style="margin: 0"><a href="/Home/Rss"><img style="vertical-align: middle;" src="/img/common/feed-icon-28x28.png" /> Feed</a></li>
-                        </ul>
-                    </div>
-
-                    <div style="color: #777; font-size: 0.8em; margin-top:30px">
-                        This site uses <a style="font-size: 100%" href="https://www.google.com/search?tbm=isch&amp;q=Cookies">Cookies</a>.
-                    </div>
+    <header class="main">
+        <div class="header-info container">
+            <div class="row header-info-content">
+                <div class="col-md-4 col-md-offset-4">
+                    <h1>Marcin Drobik</h1>
+                    <h3>software journeyman notes</h3>
                 </div>
             </div>
         </div>
+
+
+    </header>
+    <section class="section-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6" style="">
+                    <h1>About Me <i class="fa fa-arrow-circle-o-down"></i></h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-me">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>I am</h1>
+                    <p>... a Software Engineer that likes to program everything - from simple custom tools to enterprise class systems. </p>
+                    <p>Apart from technical aspects of programming, I'm is also interested in the dynamics of team-work and human motivation.
+                    <p>I created commercial software for various markets: finance, insurance, access control and others. Currently, at Future Processing, I'm supporting other teams in defining their development process, maintaining high quality code, choosing tools and designing software architecture.</p>
+
+                    <p>
+                        Catch me on:
+
+                        <a href="https://github.com/mandrek44/"><img style="vertical-align: middle;" src="/img/common/octocat-28.png" /> </a>
+                        <a href="https://twitter.com/mandrek44"><img style="vertical-align: middle;" src="/img/common/twitter-28.png" /></a>
+                        <a href="/Home/Rss"><img style="vertical-align: middle;" src="/img/common/feed-icon-28x28.png" /> </a>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h1>You could see me at:</h1>
+                    <ul>
+                        <li>
+                            <p>
+                                <a href="http://qualityexcites.pl/2013/wspolczesne-metodyki-tworzenia-oprogramowania/">Quality Excites, 25 May 2013</a>
+                                - "Współczesne metodyki tworzenia oprogramowania" (workshop)
+                            </p>
+                        </li>
+                        <li><p><a href="http://futuredevday.pl/2013/prelegenci/#md">Future Dev Day, 29 September 2013</a> - "Event Sourcing"</p></li>
+                        <li><p><a href="http://futuredevday.pl/2014/agenda/#event-495">Future Dev Day, 3 October 2014</a> - "Od Zera do Bohatera"</p></li>
+                        <li><p><a href="https://www.facebook.com/events/1613136632247980/">#Btoknet47, 14 January 2015</a> -  "Od Zera do Bohatera"</p></li>
+                        <li><p><a href="http://www.wg.net.pl/aktualnosci/zaproszeniena82spotkaniewgnet">#WG.NET82, 15 January 2015</a> - "Od Zera do Bohatera"</p></li>
+                        <li>
+                            <p>
+                                <a href="http://4developers.org.pl/en/agenda/lecture/od-zera-do-bohatera-inkrement-biznesowy-w-25-minut/">4Developers, 20 April 2015</a>
+                                - "Od Zera do Bohatera"
+                            </p>
+                        </li>
+                        <li><p><a href="http://www.meetup.com/Quality-Meetup/events/221908978/">#QualityMeetup5, 29 April 2015</a> - "Sins of Test Automation"</p></li>
+                        <li>
+                            <p>
+                                <a href="http://2015.itakeunconf.com/sessions/marcin-drobik-krysztof-szabelski-from-zero-to-hero-business-increment-in-30-minutes/">I T.A.K.E. Unconference, 29 May 2015</a>
+                                - "From Zero To Hero"
+                            </p>
+                        </li>
+                    </ul>
+                    <p>&nbsp;</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6" style="">
+                    <h1>Blog <i class="fa fa-arrow-circle-o-down"></i></h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Example post starts here -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- A wrapper for all the blog posts -->
+                @RenderBody()
+
+
+            </div>
+        </div>
     </div>
+
+    <!-- Example posts ends here -->
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="http://yui.yahooapis.com/3.14.1/build/yui/yui.js"></script>
     <script>
         YUI().use('node-base', 'node-event-delegate', function (Y) {
@@ -80,7 +173,7 @@
             }, 'a[href="#"]');
         });
     </script>
-    
+
     <script>
         (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
@@ -95,17 +188,16 @@
     </script>
 
     <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'marcindrobikpl'; // required: replace example with your forum shortname
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'marcindrobikpl'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function () {
-        var s = document.createElement('script'); s.async = true;
-        s.type = 'text/javascript';
-        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script'); s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
     </script>
-
 </body>
 </html>

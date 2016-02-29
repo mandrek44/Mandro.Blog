@@ -1,0 +1,16 @@
+﻿@model dynamic
+@using System
+@using Mandro.Blog.Worker.Controllers
+@using MarkdownSharp
+@{
+
+    Layout = "Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="posts">
+    <h1 class="content-subhead">Posts in @Model.Category </h1>
+    @foreach (var blogPost in @Model.Posts)
+    {
+        @Include("Views/Shared/SinglePost.cshtml", blogPost)
+    }
+</div>
