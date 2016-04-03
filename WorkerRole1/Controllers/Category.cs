@@ -17,7 +17,7 @@ namespace Mandro.Blog.Worker.Controllers
         {
             var categoryName = postQuery.Param1;
 
-            var posts = _repository.GetPosts().Where(p => p.Category == categoryName);
+            var posts = _repository.GetPosts().Where(p => p.Category == categoryName).OrderByDescending(post => post.Created);
 
             return new { Posts = posts, Category = categoryName };
         }

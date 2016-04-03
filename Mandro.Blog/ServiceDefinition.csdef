@@ -13,6 +13,7 @@
     <ConfigurationSettings>
       <Setting name="BlogStorage" />
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
+      <Setting name="AdminPass" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

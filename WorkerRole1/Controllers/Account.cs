@@ -3,6 +3,7 @@
 using Mandro.Owin.SimpleMVC;
 
 using Microsoft.Owin.Security;
+using Microsoft.WindowsAzure;
 
 namespace Mandro.Blog.Worker.Controllers
 {
@@ -10,20 +11,21 @@ namespace Mandro.Blog.Worker.Controllers
     {
         public void GetLogin()
         {
-
         }
 
         [Authorize]
-        public void GetInfo()
+        public dynamic GetInfo(dynamic environment)
         {
-            
+            return null;
         }
 
         public dynamic PostLogin(dynamic loginDetails)
         {
-            if (loginDetails.UserName != "Mandro" || loginDetails.Password != "957gNH4wEAe5ZpO2FGdG")
+            var adminPass = CloudConfigurationManager.GetSetting("AdminPass").Trim();
+
+            if (loginDetails.UserName != "Mandro" || string.IsNullOrEmpty(loginDetails.Password) || loginDetails.Password != adminPass)
             {
-                return null;
+                return Redirect.To((Account controller) => controller.GetInfo);
             }
 
             var claims = new[] { new Claim(ClaimTypes.Name, loginDetails.UserName) };

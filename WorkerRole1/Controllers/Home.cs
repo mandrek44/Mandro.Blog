@@ -25,6 +25,13 @@ namespace Mandro.Blog.Worker.Controllers
         {
             var owinContext = environment.Context as IOwinContext;
 
+            return new { Posts = _blogPostsRepository.GetPosts().OrderByDescending(post => post.Created).Take(2).ToArray(), IsLogged = owinContext.IsSignedIn() };
+        }
+
+        public dynamic GetAll(dynamic environment)
+        {
+            var owinContext = environment.Context as IOwinContext;
+
             return new { Posts = _blogPostsRepository.GetPosts().OrderByDescending(post => post.Created).ToArray(), IsLogged = owinContext.IsSignedIn() };
         }
 
@@ -37,7 +44,15 @@ namespace Mandro.Blog.Worker.Controllers
             owinContext.Response.ContentType = "application/rss+xml; charset=utf-8";
 
             var author = new SyndicationPerson("admin@marcindrobik.pl", "Marcin Drobik", "http://marcindrobik.pl");
-            var category = new SyndicationCategory("Software Development");
+
+            var defaultCategory = new SyndicationCategory("Software Development");
+            var dajsiepoznacCategory = new SyndicationCategory("dajsiepoznac");
+            List<SyndicationCategory> categories = new List<SyndicationCategory>()
+            {
+                defaultCategory,
+                dajsiepoznacCategory
+            };
+
             var markdown = new MarkdownSharp.Markdown();
 
             var syndicationItems = blogPosts.Select(
@@ -47,7 +62,26 @@ namespace Mandro.Blog.Worker.Controllers
 
                     var item = new SyndicationItem();
                     item.Authors.Add(author);
-                    item.Categories.Add(category);
+
+                    var existingCategory = categories.FirstOrDefault(c => c.Name == post.Category);
+                    if (existingCategory == null)
+                    {
+                        if (!string.IsNullOrEmpty(post.Category))
+                        {
+                            existingCategory = new SyndicationCategory(post.Category);
+                            categories.Add(existingCategory);
+                        }
+                        else
+                        {
+                            existingCategory = defaultCategory;
+                        }
+                    }
+
+
+                    item.Categories.Add(existingCategory);
+                    if (existingCategory.Name == "Stratosphere.NET")
+                        item.Categories.Add(dajsiepoznacCategory);
+
                     item.Links.Add(SyndicationLink.CreateAlternateLink(uri));
                     item.Summary = TextSyndicationContent.CreatePlaintextContent(markdown.Transform(post.Content));
                     item.PublishDate = post.Created;
@@ -56,13 +90,13 @@ namespace Mandro.Blog.Worker.Controllers
 
                     return item;
                 });
-            
+
             var feed = new SyndicationFeed();
             feed.Title = TextSyndicationContent.CreatePlaintextContent("marcindrobik.pl");
             feed.Description = TextSyndicationContent.CreatePlaintextContent("software journeyman notes");
             feed.Links.Add(SyndicationLink.CreateAlternateLink(new Uri("http://marcindrobik.pl")));
             feed.Authors.Add(author);
-            feed.Categories.Add(category);
+            feed.Categories.Add(defaultCategory);
             feed.Language = "en-US";
             feed.Items = syndicationItems;
 

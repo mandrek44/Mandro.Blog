@@ -6,9 +6,10 @@
 
 <div class="posts">
     @if (Model.IsLogged)
+    {
         <a href="/Post/Edit/@Model.Post.PartitionKey/@Model.Post.RowKey">Edit</a>
     }
-    @Model.Category
+    @Include("Views/Shared/SinglePost.cshtml", Model.Post)
     
     <div id="disqus_thread"></div>
     <script type="text/javascript">

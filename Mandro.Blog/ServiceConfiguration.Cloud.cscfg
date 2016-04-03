@@ -6,13 +6,14 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=mandrostorage;AccountKey=Qvbyl+ZI1Sz8b06vNvD2FfwvTewF8TOJI6i0zKUbNa5QDnFf6fw6t9kasoI8FO7hghRyOfBUjPPAEu5g1x9voQ==" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="mandro" />
-      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBpQYJKoZIhvcNAQcDoIIBljCCAZICAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEFrsiXFJOeGpQUZIinfNLNswDQYJKoZIhvcNAQEBBQAEggEAJqD8tn0EtcSA0LlNzttls1e6RX0Yeo8Wn0Qm31uE4bA0YXTF3PdzbwA8dM/1KnJCF+fJaqYaXaCshuvXb8UMRFh1h7Hk5im2MM/VyeX0q30sw84vwjxiZVSMqfDQNq6Q42V1Ii2BSyR1/iYOfnLuJZkrK6ZjfOJgWkKOYLLq8l5wpKtXd9BvpZJmW/3IKybaqdOaSo7SKupI5MPwCVVfIBvjdKwlKA6kfH+HYVu7obNRI64cj/8tmjMfOnd+ZyjCnLFxfbb6/lhht6ICLTGwGAC5kVF6wG5SyEOK9vhBq7q4YpQ7+q8lSh3EN+UjZX32TcqG3kmK5x4gDVcKzIwSHTA7BgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECK5b+lqrUPLegBjXxBoElaqFvEV7OiRsfz0nMkNX6Iw2AM8=" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBpQYJKoZIhvcNAQcDoIIBljCCAZICAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEBTAlOjpj7SPRR2j+M6xACAwDQYJKoZIhvcNAQEBBQAEggEAXP+S8XwBHgKZkmSmGjuqGVSVKyE7cJPBKCBlNjYH/OMYH0Oy54hwVOEpXy0ZnGt1qgonHcxrM0Du817rzHaXuxpYM9Kqs43fdXgjkM0FCdx0OVRAp9jt8oPI/MFmLhku5Ja32kZA1RsAAl2RD4iUgRoVuEAvk3FQ5TDTJTAl9a/1OOmmzf7L8Ow+bE6JA+rIoECosK7Qf0QHZRZqHu6FZmcrYFsEqeB0b0HNAsO0qDA4AiWu6A3fsC6OZbwM58b6hrPvwamkrSJGNOeb1HEtd6hJjjFwGC4eoFmlUeZ9QB2F7r9JtOd8KmsBPyovfTzcUBoPzKCd53K8k+HQ7CBvgTA7BgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECJ+u1EIeQ+I1gBj/s4Dxap0KplxfSTgVNQTayZ++dPIJ188=" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2015-04-18T23:59:59.0000000+02:00" />
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
       <Setting name="BlogStorage" value="DefaultEndpointsProtocol=https;AccountName=mandrostorage;AccountKey=Qvbyl+ZI1Sz8b06vNvD2FfwvTewF8TOJI6i0zKUbNa5QDnFf6fw6t9kasoI8FO7hghRyOfBUjPPAEu5g1x9voQ==" />
+      <Setting name="AdminPass" value="admin" />
     </ConfigurationSettings>
     <Certificates>
-      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="BB7501B277DE5F328AFAA0C9BC0430F6B6E76B1D" thumbprintAlgorithm="sha1" />
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="FADF52D02656AAEBCECD0981CF49E499168AC59D" thumbprintAlgorithm="sha1" />
     </Certificates>
   </Role>
 </ServiceConfiguration>

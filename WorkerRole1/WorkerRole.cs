@@ -25,7 +25,7 @@ namespace Mandro.Blog.Worker
 
                 try
                 {
-                    blogWebApp = WebApp.Start<BlogStartup>("http://*:31453");
+                    blogWebApp = WebApp.Start<BlogStartup>("http://*:8081");
                 }
                 catch (Exception e)
                 {
