@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
@@ -9,6 +10,7 @@ using System.Xml;
 using Mandro.Blog.Worker.Infrastructure;
 
 using Microsoft.Owin;
+using Microsoft.WindowsAzure;
 
 namespace Mandro.Blog.Worker.Controllers
 {
@@ -37,11 +39,13 @@ namespace Mandro.Blog.Worker.Controllers
 
         public dynamic GetRss(dynamic environment)
         {
-            var indexResponse = GetIndex(environment);
+            var indexResponse = GetAll(environment);
             var blogPosts = indexResponse.Posts as BlogPost[];
 
             var owinContext = environment.Context as IOwinContext;
             owinContext.Response.ContentType = "application/rss+xml; charset=utf-8";
+
+            RegisterPageView(owinContext);
 
             var author = new SyndicationPerson("admin@marcindrobik.pl", "Marcin Drobik", "http://marcindrobik.pl");
 
@@ -109,6 +113,25 @@ namespace Mandro.Blog.Worker.Controllers
 
                 return stream.ToArray();
             }
+        }
+
+        private static void RegisterPageView(IOwinContext owinContext)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("http://www.google-analytics.com")
+            };
+            var postContent = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("v", "1"),
+                new KeyValuePair<string, string>("tid", CloudConfigurationManager.GetSetting("TrackingID")),
+                new KeyValuePair<string, string>("cid", "ea617fac-c92f-4b61-87ce-131a71c12cb8"),
+                new KeyValuePair<string, string>("t", "pageview"),
+                new KeyValuePair<string, string>("dh", owinContext.Request.Uri.Host),
+                new KeyValuePair<string, string>("dp", owinContext.Request.Uri.PathAndQuery),
+            });
+
+            client.PostAsync("collect", postContent);
         }
     }
 }

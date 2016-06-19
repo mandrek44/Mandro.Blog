@@ -11,6 +11,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
       <Setting name="BlogStorage" value="UseDevelopmentStorage=true" />
       <Setting name="AdminPass" value="admin" />
+      <Setting name="TrackingID" value="" />
     </ConfigurationSettings>
     <Certificates>
       <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="FADF52D02656AAEBCECD0981CF49E499168AC59D" thumbprintAlgorithm="sha1" />

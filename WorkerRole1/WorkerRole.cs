@@ -25,7 +25,11 @@ namespace Mandro.Blog.Worker
 
                 try
                 {
+#if DEBUG
                     blogWebApp = WebApp.Start<BlogStartup>("http://*:8081");
+#else
+                    blogWebApp = WebApp.Start<BlogStartup>("http://*:80");
+#endif
                 }
                 catch (Exception e)
                 {
